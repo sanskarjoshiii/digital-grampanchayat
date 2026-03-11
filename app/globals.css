@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* HTML: <div className="loader"></div> */
+
+.container {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.logo span {
+  font-size: 50px;
+  color: white;
+}
+.logo {
+  margin-right: 60px;
+  color: aqua;
+}
+
+.mainContainer {
+  height: 20vh;
+  margin: 0;
+  padding: 0;
+}
+.image-container {
+  width: 80%;
+}
+
+/* slider  */
+.slider {
+  width: 90%;
+  height: 40vh;
+  /* background-color: green; */
+  margin: auto;
+  position: relative;
+}
+.btn1 {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  bottom: 150px;
+  width: 100%;
+  gap: 20px;
+}
+.about-container {
+  /* display: flex; */
+  justify-content: space-between;
+}
+@media screen and(max-width:600px){
+  .about-container {
+  display: block;
+}
+}
+/* card  */
+.card1 {
+  width: 50%;
+  margin-right: 30px;
+  margin-left: 20px;
+}
+
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+}
+.loader::before,
+.loader::after {    
+  content:"";
+  grid-area: 1/1;
+  --c:no-repeat radial-gradient(farthest-side,#25b09b 92%,#0000);
+  background: 
+    var(--c) 50%  0, 
+    var(--c) 50%  100%, 
+    var(--c) 100% 50%, 
+    var(--c) 0    50%;
+  background-size: 12px 12px;
+  animation: l12 1s infinite;
+}
+.loader::before {
+  margin: 4px;
+  filter: hue-rotate(45deg);
+  background-size: 8px 8px;
+  animation-timing-function: linear
+}
+
+@keyframes l12 { 
+  100%{transform: rotate(.5turn)}
+}
+.box-shadow{
+  -webkit-box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.75);
+box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.75);
+}
