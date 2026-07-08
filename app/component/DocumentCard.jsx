@@ -1,28 +1,29 @@
-import React from 'react'
+import React from "react";
 
-const DocumentCard = ({data}) => {
+const DocumentCard = ({ data }) => {
   return (
-    <div className="w-[85%] h-auto py-4 px-2 box-shadow flex flex-row items-center justify-around my-4">
-        <div className="flex flex-row items-center gap-4 w-[60%]">
+    <div className="ds-card w-[88%] max-w-2xl mx-auto my-3 py-4 px-4 flex flex-row items-center justify-between gap-4">
+      <div className="flex flex-row items-center gap-3 min-w-0">
+        <div className="w-11 h-11 rounded-lg bg-mist border border-line flex items-center justify-center shrink-0">
           <img
-            width="48"
-            height="48"
-            src="https://img.icons8.com/color/48/pdf.png"
+            width="24"
+            height="24"
+            src="https://img.icons8.com/ios/50/1f1f1f/pdf.png"
             alt="pdf"
           />
-          <p className='w-[60%] break-words'>{data.title}</p>
         </div>
-        <a
-          href={data.url}
-          target="_blank"
-          style={{ textDecoration: "none" }}
-          className="max-w-40  h-10 py-2 px-6 flex flex-row items-center text-white justify-center bg-purple-700"
-        >
-          View
-        </a>
+        <p className="text-sm text-ink break-words min-w-0">{data.title}</p>
       </div>
+      <a
+        href={data.url}
+        target="_blank"
+        rel="noreferrer"
+        className="btn-primary text-sm shrink-0"
+      >
+        View
+      </a>
+    </div>
+  );
+};
 
-  )
-}
-
-export default DocumentCard
+export default DocumentCard;

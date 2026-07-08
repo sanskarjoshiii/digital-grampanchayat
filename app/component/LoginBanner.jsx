@@ -1,13 +1,15 @@
-import React from 'react'
-import Name from './Name'
+import React from "react";
+import Name from "./Name";
 
 const LoginBanner = () => {
   return (
-    <div className='w-full py-4  flex flex-col justify-center items-center'>
-        <img src='/merilogo.png' className='w-20 my-4'/>
-        <h1 className=' flex flex-row items-center gap-1 text-md'>Welcome to <Name breaks={false}/></h1>
+    <div className="w-full flex flex-col justify-center items-center gap-3">
+      <img src="/merilogo.png" className="w-14" alt="MeriPanchayat" />
+      <div className="text-center">
+        <Name breaks={false} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginBanner
+export default LoginBanner;

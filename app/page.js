@@ -1,87 +1,99 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import Sidebar from "./component/Sidebar";
-import { useEffect, useState } from "react";
-import Header from "./component/Header";
 import { useGlobalContext } from "./context/context";
 import Link from "next/link";
 
 export default function Home() {
-  const router = useRouter();
-  const { toggleSidebar, openSidebar, setOpenSidebar,language } = useGlobalContext();
-  useEffect(() => {
-    if (!localStorage.getItem("email")) {
-      router.push("/login");
-    }
-  });
+  // Public landing — anyone can browse without logging in.
+  const { setOpenSidebar, language } = useGlobalContext();
+
+  const t =
+    language == "english"
+      ? {
+          eyebrow: "Digital Gram Panchayat",
+          welcome: "Welcome to",
+          brand: "MeriPanchayat",
+          tagline:
+            "Transparent, accessible and paperless village governance — funds, documents and services, in one place.",
+          cta: "Know more about us",
+          funds: "Panchayat Funds",
+          docs: "Documents",
+          services: "Nearby Services",
+        }
+      : {
+          eyebrow: "डिजिटल ग्राम पंचायत",
+          welcome: "आपका स्वागत है",
+          brand: "मेरी पंचायत",
+          tagline:
+            "पारदर्शी, सुलभ और कागज़-रहित ग्राम शासन — निधि, दस्तऐवज और सेवाएँ, एक ही स्थान पर।",
+          cta: "हमारे बारे में अधिक जानें",
+          funds: "पंचायत निधि",
+          docs: "दस्तऐवज",
+          services: "जवळच्या सेवा",
+        };
+
+  const quickLinks = [
+    {
+      title: t.funds,
+      href: "/panchayat_funds",
+      img: "https://img.icons8.com/ios/50/1f1f1f/coins--v1.png",
+    },
+    {
+      title: t.docs,
+      href: "/documents",
+      img: "https://img.icons8.com/ios/50/1f1f1f/document--v1.png",
+    },
+    {
+      title: t.services,
+      href: "/nearby_services",
+      img: "https://img.icons8.com/ios/50/1f1f1f/services--v1.png",
+    },
+  ];
 
   return (
-    <>
-      {/* <Sidebar /> */}
-      {language == "english" ? (
-        <div
-          className="w-full bg-gray-900 h-[100vh]"
-          onClick={() => setOpenSidebar(false)}
-        >
-          <div className="flex flex-col w-[40%] mx-auto items-start justify-center py-10 gap-4 text-emerald-700 text-4xl">
-            <h1 className="text-4xl font-medium">
-              <span className="text-6xl text-orange-600">W</span>elcome
-            </h1>
-            <h1>
-              <span className="text-6xl text-red-600">T</span>O
-            </h1>
-            <h1>
-              <span className="text-6xl text-green-600">D</span>igital
-            </h1>
-            <h1>
-              <span className="text-6xl text-yellow-600">G</span>ram
-            </h1>
-            <h1>
-              <span className="text-6xl text-orange-600">P</span>anchayat
-            </h1>
-          </div>
-          <div className="w-full flex flex-row items-center justify-center">
-            <Link
-              href={"/about"}
-              className="text-white text-xl bg-none border-2 border-green-400 border-dotted py-2 px-4 mx-auto"
-            >
-              Know More About Us
-            </Link>
-          </div>
+    <div
+      className="w-full min-h-[91vh] bg-paper px-4 sm:px-8 py-8"
+      onClick={() => setOpenSidebar(false)}
+    >
+      <div className="max-w-4xl mx-auto">
+        {/* Hero */}
+        <div className="ds-panel-cream px-6 sm:px-10 py-12 sm:py-16">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted mb-4">
+            {t.eyebrow}
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-semibold text-ink leading-[1.1]">
+            {t.welcome}
+            <br />
+            {t.brand}
+          </h1>
+          <p className="mt-5 max-w-xl text-muted text-base sm:text-lg">
+            {t.tagline}
+          </p>
+          <Link href="/about" className="btn-primary mt-8 text-sm">
+            {t.cta}
+            <span aria-hidden>→</span>
+          </Link>
         </div>
-      ) : (
-        <div
-          className="w-full bg-gray-900 h-[100vh]"
-          onClick={() => setOpenSidebar(false)}
-        >
-          <div className="flex flex-col w-[40%] mx-auto items-start justify-center py-10 gap-4 text-emerald-700 text-4xl">
-            <h1 className="text-4xl font-medium">
-              <span className="text-6xl text-orange-600">स्वा</span>गत है
-            </h1>
-            <h1>
-              <span className="text-6xl text-red-600">यहाँ</span>{" "}
-            </h1>
-            <h1>
-              <span className="text-6xl text-green-600">डिजिटल</span>
-            </h1>
-            <h1>
-              <span className="text-6xl text-yellow-600">ग्राम</span>
-            </h1>
-            <h1>
-              <span className="text-6xl text-orange-600">पंचायत</span>
-            </h1>
-          </div>
-          <div className="w-full flex flex-row items-center justify-center">
+
+        {/* Quick links */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+          {quickLinks.map((q, i) => (
             <Link
-              href={"/about"}
-              className="text-white text-xl bg-none border-2 border-green-400 border-dotted py-2 px-4 mx-auto"
+              key={i}
+              href={q.href}
+              className="ds-card p-5 flex flex-row items-center gap-4 hover:shadow-pop transition-shadow"
             >
-              हमारे बारे में अधिक जानें
+              <div className="w-11 h-11 rounded-lg bg-mist border border-line flex items-center justify-center shrink-0">
+                <img src={q.img} width={22} height={22} alt="" />
+              </div>
+              <span className="text-sm font-medium text-ink">{q.title}</span>
+              <span className="ml-auto text-muted" aria-hidden>
+                →
+              </span>
             </Link>
-          </div>
+          ))}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }

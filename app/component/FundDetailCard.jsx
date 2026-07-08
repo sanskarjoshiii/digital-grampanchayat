@@ -4,140 +4,105 @@ import { useGlobalContext } from "../context/context";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
+const money = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
+
 const FundDetailCard = ({ data, year }) => {
-  const { userData,language } = useGlobalContext();
+  const { userData, language } = useGlobalContext();
 
   const handleDelete = async () => {
     const response = await fetch(`/api/admin/panchayat_funds/${data._id}`, {
       method: "delete",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
     if (response.status == 200) {
-      toast.success("delete successfully");
+      toast.success("Deleted successfully");
     }
   };
+
+  const t =
+    language == "english"
+      ? {
+          scheme: "Scheme",
+          component: "Component",
+          expected: "Expected Funds",
+          actual: "Actual Funds Received",
+          reverted: "Reverted / Surrendered Funds",
+          expenditure: "Actual Expenditure",
+          edit: "Edit",
+          del: "Delete",
+        }
+      : {
+          scheme: "योजना",
+          component: "घटक",
+          expected: "अपेक्षित निधि",
+          actual: "वास्तविक प्राप्त निधि",
+          reverted: "वापस/समर्पित निधि",
+          expenditure: "वास्तविक व्यय",
+          edit: "संपादित करें",
+          del: "हटाएं",
+        };
+
+  const rows = [
+    { label: t.expected, value: data.expected_funds },
+    { label: t.actual, value: data.actual_funds },
+    { label: t.reverted, value: data.reverted_funds },
+    { label: t.expenditure, value: data.actual_expenditure },
+  ];
+
   return (
-   <>
-   {language=="english"? <div className="box-shadow w-[85%] h-auto mx-auto my-4 bg-white rounded-lg p-4">
-      <div className="w-[95%] h-auto py-2 mx-auto border-b-2  flex flex-col">
-        <div className="flex flex-row items-center py-2 gap-2">
-          <span className="font-bold text-black text-xl">Scheme:</span>
-          <span className="text-black font-extrabold">{data.scheme}</span>
+    <div className="ds-card w-[88%] max-w-2xl mx-auto my-4 p-5">
+      <div className="pb-4 border-b border-line">
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-row items-baseline gap-2">
+            <span className="text-xs uppercase tracking-wide text-muted">
+              {t.scheme}
+            </span>
+            <span className="text-base font-semibold text-ink">
+              {data.scheme}
+            </span>
+          </div>
+          <div className="flex flex-row items-baseline gap-2">
+            <span className="text-xs uppercase tracking-wide text-muted">
+              {t.component}
+            </span>
+            <span className="text-sm font-medium text-ink">
+              {data.component}
+            </span>
+          </div>
         </div>
-        <div className="flex flex-row items-center gap-2">
-          <span className=" text-xl font-bold text-black">Component:</span>
-          <span className="text-black font-extrabold">{data.component}</span>
-        </div>
       </div>
-      <div className="w-[95%] h-auto py-2 mx-auto border-b-2">
-        <span className="font-bold text-black">Expected Funds:</span>
-        <span className="text-green-900 font-bold">₹{data.expected_funds}</span>
-      </div>
-      <div className="w-[95%] h-auto mx-auto border-b-2 flex flex-row justify-between items-center py-4">
-        <span>
-          <span className="font-bold text-black">Actual Funds Received:</span>
-          <span className="text-purple-800 font-bold">
-          ₹{data.actual_funds}
-          </span>
-        </span>
-      </div>
-      <div className="w-[95%] h-auto mx-auto border-b-2 flex flex-row justify-between items-center py-2">
-        <span>
-          <span className="font-bold text-black">
-            Reverted/Surrendered Funds:
-          </span>
-          <span className="text-violet-700 font-bold ">
-          ₹{data.reverted_funds}
-          </span>
-        </span>
-      </div>
-      <div className="w-[95%] h-auto mx-auto flex flex-row justify-between items-center py-2">
-        <span>
-          <span className="font-bold text-black">Actual Expenditure:</span>
-          <span className="text-red-700 font-bold">
-          ₹
-          {data.actual_expenditure}
-          </span>
-        </span>
-      </div>
-      {userData.userType == "admin" ? (
-        <div className="w-[95%] h-auto mx-auto flex flex-row justify-between items-center py-2 gap-6">
-          <button className="w-[20vh] h-10 bg-green-600 text-white rounded-md">
-            <Link href={`/admin/editfunds/${data._id}`}>Edit</Link>
-          </button>
-          <button
-            className="w-[20vh] h-10 bg-red-600 text-white rounded-md"
-            onClick={() => {
-              handleDelete();
-            }}
+
+      <div className="divide-y divide-line">
+        {rows.map((r, i) => (
+          <div
+            key={i}
+            className="flex flex-row items-center justify-between py-3"
           >
-            Delete
-          </button>
-        </div>
-      ) : (
-        ""
-      )}
-    </div>: 
-    <div className="box-shadow w-[85%] h-auto mx-auto my-4 bg-white rounded-lg p-4">
-      <div className="w-[95%] h-auto py-2 mx-auto border-b-2 flex flex-col">
-        <div className="flex flex-row items-center py-2 gap-2">
-          <span className="font-bold text-black text-xl">योजना:</span>
-          <span className="text-black font-extrabold">{data.scheme}</span>
-        </div>
-        <div className="flex flex-row items-center gap-2">
-          <span className="text-xl font-bold text-black">घटक:</span>
-          <span className="text-black font-extrabold">{data.component}</span>
-        </div>
+            <span className="text-sm text-muted">{r.label}</span>
+            <span className="text-sm font-semibold text-ink">
+              {money(r.value)}
+            </span>
+          </div>
+        ))}
       </div>
-      <div className="w-[95%] h-auto py-2 mx-auto border-b-2">
-        <span className="font-bold text-black">अपेक्षित निधि:</span>
-        <span className="text-green-900 font-bold">₹{data.expected_funds}</span>
-      </div>
-      <div className="w-[95%] h-auto mx-auto border-b-2 flex flex-row justify-between items-center py-4">
-        <span>
-          <span className="font-bold text-black">वास्तविक प्राप्त निधि:</span>
-          <span className="text-purple-800 font-bold">
-            ₹{data.actual_funds}
-          </span>
-        </span>
-      </div>
-      <div className="w-[95%] h-auto mx-auto border-b-2 flex flex-row justify-between items-center py-2">
-        <span>
-          <span className="font-bold text-black">वापस/समर्पित निधि:</span>
-          <span className="text-violet-700 font-bold">
-            ₹{data.reverted_funds}
-          </span>
-        </span>
-      </div>
-      <div className="w-[95%] h-auto mx-auto flex flex-row justify-between items-center py-2">
-        <span>
-          <span className="font-bold text-black">वास्तविक व्यय:</span>
-          <span className="text-red-700 font-bold">
-            ₹{data.actual_expenditure}
-          </span>
-        </span>
-      </div>
-      {userData.userType == "admin" ? (
-        <div className="w-[95%] h-auto mx-auto flex flex-row justify-between items-center py-2 gap-6">
-          <button className="w-[20vh] h-10 bg-green-600 text-white rounded-md">
-            <Link href={`/admin/editfunds/${data._id}`}>संपादित करें</Link>
-          </button>
-          <button
-            className="w-[20vh] h-10 bg-red-600 text-white rounded-md"
-            onClick={() => {
-              handleDelete();
-            }}
+
+      {userData.userType == "admin" && (
+        <div className="flex flex-row items-center gap-3 pt-4">
+          <Link
+            href={`/admin/editfunds/${data._id}`}
+            className="btn-ghost text-sm flex-1"
           >
-            हटाएं
+            {t.edit}
+          </Link>
+          <button
+            onClick={handleDelete}
+            className="btn-primary text-sm flex-1 bg-ink"
+          >
+            {t.del}
           </button>
         </div>
-      ) : (
-        ""
       )}
-    </div>}
-   </>
+    </div>
   );
 };
 

@@ -29,7 +29,8 @@ if(response.status==200){
   setOpenModal(true)
 }
 else{
-  toast.error("Enter a valid email")
+  const res = await response.json().catch(() => ({}));
+  toast.error(res.message || "Could not send OTP. Please try again.")
 }
 setLoader(false)
   };
@@ -64,120 +65,93 @@ setLoader(false)
   };
 
   return (
-    <>
-     
-      <div className="flex flex-col justify-center items-center w-full h-auto">
-<LoginBanner/>
-        <div className="max-w-sm mx-auto box-shadow w-[auto] h-[auto] px-10 py-16">
-          <h1 className="w-full text-center h-8 font-semibold text-xl mb-6">
-            Create your account
-          </h1>
-          <div className="mb-5">
-            <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-            >
-              Your Name
+    <div className="min-h-[100vh] w-full bg-cream flex flex-col justify-center items-center px-4 py-10">
+      <div className="ds-card w-full max-w-sm px-8 py-10">
+        <div className="mb-8">
+          <LoginBanner />
+        </div>
+        <h1 className="w-full text-center font-semibold text-xl mb-6 text-ink">
+          Create your account
+        </h1>
+        <div className="mb-4">
+          <label htmlFor="name" className="ds-label">
+            Your name
+          </label>
+          <input
+            type="text"
+            id="name"
+            value={userData.name}
+            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+            className="ds-input"
+            placeholder="Enter your name"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="email" className="ds-label">
+            Your email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={userData.email}
+            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+            className="ds-input"
+            placeholder="name@gmail.com"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password" className="ds-label">
+            Your password
+          </label>
+          <input
+            type="password"
+            placeholder="Enter password"
+            value={userData.password}
+            onChange={(e) =>
+              setUserData({ ...userData, password: e.target.value })
+            }
+            id="password"
+            className="ds-input"
+            required
+          />
+        </div>
+        {openModal && (
+          <div className="mb-4">
+            <label htmlFor="otp" className="ds-label">
+              Your OTP
             </label>
-            <input
-              type="text"
-              id="name"
-              value={userData.name}
-              onChange={(e) =>
-                setUserData({ ...userData, name: e.target.value })
-              }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Enter your name"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-            >
-              Your email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={userData.email}
-              onChange={(e) =>
-                setUserData({ ...userData, email: e.target.value })
-              }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="name@gmail.com"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-            >
-              Your password
-            </label>
-            <input
-              type="password"
-              placeholder="Enter password"
-              value={userData.password}
-              onChange={(e) =>
-                setUserData({ ...userData, password: e.target.value })
-              }
-              id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required
-            />
-          </div>
-        {openModal &&  <div className="mb-5">
-            <label
-              htmlFor="otp"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-            >
-              Your Otp
-                          </label>
             <input
               type="number"
-              placeholder="Enter Otp"
+              placeholder="Enter OTP"
               value={otp}
-              onChange={(e) =>
-                setOtp(e.target.value )
-              }
+              onChange={(e) => setOtp(e.target.value)}
               id="otp"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="ds-input"
               required
             />
-          </div>}
-          <div className="flex items-start mb-6">
-            <div className="flex items-center h-6 w-full">
-              <Link
-                href={"/login"}
-                className=" w-full text-right text-blue-500 underline-offset-2 underline"
-              >
-                Already has a account?
-              </Link>
-            </div>
           </div>
-         {openModal==false ? <button
-          onClick={handleOtp}
-            
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        )}
+        <div className="flex items-center justify-end mb-6 text-sm">
+          <Link
+            href={"/login"}
+            className="text-ink font-medium hover:underline underline-offset-2"
           >
-            Send Otp
-          </button>
-          :
-          <button
-          onClick={handleSubmit}
-            
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Create
-          </button>
-          
-          }
+            Already have an account?
+          </Link>
         </div>
+        {openModal == false ? (
+          <button onClick={handleOtp} className="btn-primary w-full">
+            Send OTP
+          </button>
+        ) : (
+          <button onClick={handleSubmit} className="btn-primary w-full">
+            Create account
+          </button>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

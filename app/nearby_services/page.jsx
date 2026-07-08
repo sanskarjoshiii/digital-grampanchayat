@@ -49,21 +49,30 @@ const Page = () => {
   ];
 
   return (
-    <div className="w-full h-auto py-4 px-6">
-      <div className="w-full mb-5 h-auto py-2 px-0 border-2 border-gray-500 text-black flex flex-row justify-center items-center">
-        Nearby Services
+    <div className="w-full min-h-[91vh] bg-paper py-8 px-4 sm:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="border-b border-line pb-6 mb-6 text-center">
+          <h1 className="text-2xl font-semibold text-ink">Nearby Services</h1>
+          <p className="text-sm text-muted mt-1">
+            Public amenities available around the village
+          </p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {services.map((data, index) => (
+            <div
+              key={index}
+              className="ds-card p-5 flex flex-col items-center gap-3 hover:shadow-pop transition-shadow"
+            >
+              <div className="w-12 h-12 rounded-lg bg-mist border border-line flex items-center justify-center">
+                <img src={data.img} width={26} height={26} alt={data.title} />
+              </div>
+              <p className="text-center text-sm font-medium text-ink">
+                {data.title}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="grid" style={{gridTemplateColumns:"auto auto auto"}}>
-
-      {services.map((data, index) => {
-          return (
-              <div key={index} className="w-30 h-auto flex flex-col my-4 items-center gap-2" >
-            <img src={data.img} width={60} height={60} className="p-2 rounded-sm" />
-            <p className="text-center">{data.title}</p>
-          </div>
-        );
-    })}
-    </div>
     </div>
   );
 };

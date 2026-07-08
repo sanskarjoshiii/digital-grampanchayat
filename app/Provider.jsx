@@ -5,14 +5,15 @@ import { useGlobalContext } from "./context/context";
 
 import Header from "./component/Header";
 import Sidebar from "./component/Sidebar";
+import SmoothScroll from "./component/SmoothScroll";
 import { usePathname } from "next/navigation";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 const Provider = ({ children }) => {
   const { setOpenSidebar, loader } = useGlobalContext();
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <>
+      <SmoothScroll />
       {pathname != "/login" &&
       pathname != "/signup" &&
       pathname != "/login/forget_password" ? (

@@ -1,5 +1,6 @@
 import Otp from "@/app/modals/Otp";
 import { connectToDB } from "@/app/utils/connection";
+import { requireEnv } from "@/app/utils/env";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
@@ -8,11 +9,13 @@ export async function POST(req) {
 
   try {
     await connectToDB();
+    const emailUser = requireEnv("EMAIL_USER", "the Gmail address that sends OTPs");
+    const emailPass = requireEnv("EMAIL_PASS", "a Gmail app password");
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "smartcoder0852@gmail.com",
-        pass: "iuyk wfjm wswv ejyq",
+        user: emailUser,
+        pass: emailPass,
       },
     });
 
@@ -30,7 +33,7 @@ export async function POST(req) {
     let otp = generateOTP();
 
     const mail = await transporter.sendMail({
-      from: "smartcoder0852@gmail.com",
+      from: emailUser,
       to: email,
       subject: `Your OTP for creating an account`,
       html: `<h1>Your OTP for creating an account is ${otp}</h1>`,
@@ -49,6 +52,9 @@ if(otpdata){
     return NextResponse.json({ message: "Success: email was sent" }, { status: 200 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ message: "COULD NOT SEND MESSAGE" }, { status: 500 });
+    return NextResponse.json(
+      { message: `Could not send OTP email: ${error.message}` },
+      { status: 500 }
+    );
   }
 }

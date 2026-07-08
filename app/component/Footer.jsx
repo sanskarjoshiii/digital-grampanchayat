@@ -1,35 +1,30 @@
 import Link from "next/link";
 
 const Footer = () => {
+  const links = [
+    { title: "Home", href: "/" },
+    { title: "About", href: "/about" },
+    { title: "Documents", href: "/documents" },
+    { title: "Funds", href: "/panchayat_funds" },
+  ];
   return (
-    <div className="container">
-      <footer className="py-3 my-4">
-        <ul className="flex flex-row justify-center">
-          <li className="nav-item">
-            <Link href="/" className="nav-link px-2 text-body-secondary">
-              Home
+    <footer className="w-full border-t border-line py-8 mt-8">
+      <ul className="flex flex-row flex-wrap justify-center gap-6">
+        {links.map((l) => (
+          <li key={l.href}>
+            <Link
+              href={l.href}
+              className="text-sm text-muted hover:text-ink transition-colors"
+            >
+              {l.title}
             </Link>
           </li>
-          <li className="nav-item">
-            <Link href="/about" className="nav-link px-2 text-body-secondary">
-              About
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link href="/documents" className="nav-link px-2 text-body-secondary">
-              Documents
-            </Link>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link px-2 text-body-secondary">
-              FAQs
-            </a>
-          </li>
-          
-        </ul>
-        <p className="text-center text-body-secondary py-4 "><span className="border-b-2 border-black"> 2024 Company Inc</span></p>
-      </footer>
-    </div>
+        ))}
+      </ul>
+      <p className="text-center text-xs text-muted mt-6">
+        © {new Date().getFullYear()} MeriPanchayat — Digital Gram Panchayat
+      </p>
+    </footer>
   );
 };
 export default Footer;

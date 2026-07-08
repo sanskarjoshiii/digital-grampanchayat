@@ -30,27 +30,23 @@ const Page = () => {
 
   return (
     <div
-      className="w-full h-auto px-2 py-6"
+      className="w-full h-auto px-2 py-6 bg-paper min-h-[91vh]"
       onClick={() => setOpenSidebar(false)}
     >
-      {language == "english" ? (
-        <h1 className="w-full text-xl lg:text-2xl font-semibold h-auto flex flex-row text-center items-center justify-center py-4 border-y-2 border-gray-400 ">
-          Scheme-wise fund receipt and expenditure
+      <div className="border-b border-line pb-6 text-center">
+        <h1 className="text-xl lg:text-2xl font-semibold text-ink px-4">
+          {language == "english"
+            ? "Scheme-wise fund receipt and expenditure"
+            : "योजना अनुसार निधि प्राप्ति और व्यय"}
         </h1>
-      ) : (
-        <h1 className="w-full text-xl lg:text-2xl font-semibold h-auto flex flex-row text-center items-center justify-center py-4 border-y-2 border-gray-400">
-          योजना अनुसार निधि प्राप्ति और व्यय
-        </h1>
-      )}
-      <div className="flex flex-col py-4 px-6">
-        {language == "english" ? (
-          <label>Select Year</label>
-        ) : (
-          <label>वर्ष चुनें</label>
-        )}{" "}
+      </div>
+      <div className="flex flex-col py-4 max-w-2xl mx-auto w-[88%]">
+        <label className="ds-label">
+          {language == "english" ? "Select year" : "वर्ष चुनें"}
+        </label>
         <select
           onChange={(e) => setSelectYear(e.target.value)}
-          className="w-40 h-10 my-2 bg-white border-2 border-gray-700"
+          className="ds-input w-40"
           value={selectYear}
         >
           <option value={2024} className="text-center">

@@ -25,51 +25,35 @@ const Page = () => {
   return (
     <div
       onClick={() => setOpenSidebar(false)}
-      className="w-full h-[90vh] overflow-hidden"
+      className="w-full h-[91vh] overflow-hidden bg-paper"
     >
-     {userData.userType=="admin" && <Link
-        href={"/admin/addfunds"}
-        className="w-[10vh] h-[10vh]  fixed bottom-10 right-8"
-        style={{ borderRadius: "50%" }}
-      >
-        <img
-          width="90"
-          height="90"
-          className="hover:rotate-90 transition-all duration-200"
-          src="https://img.icons8.com/color/48/plus--v1.png"
-          alt="plus--v1"
-        />
-      </Link>}
-      {language == "english" ? (
-        <h1 className="w-full h-16 border-y-2 border-gray-400 flex flex-row items-center justify-center ">
-          Funds Details
-        </h1>
-      ) : (
-        <h1 className="w-full h-16 border-y-2 border-gray-400 flex flex-row items-center justify-center">
-          निधि विवरण
-        </h1>
+      {userData.userType == "admin" && (
+        <Link
+          href={"/admin/addfunds"}
+          className="fixed bottom-8 right-8 z-40 btn-primary rounded-full w-14 h-14 p-0 text-2xl shadow-pop"
+          aria-label="Add funds"
+        >
+          +
+        </Link>
       )}
-      {language == "english" ? (
-        <h1 className="w-full h-20  text-gray-400 flex flex-row items-center justify-center ">
-          View list of Funds Received
+      <div className="border-b border-line px-6 py-6 text-center">
+        <h1 className="text-2xl font-semibold text-ink">
+          {language == "english" ? "Funds Details" : "निधि विवरण"}
         </h1>
-      ) : (
-        <h1 className="w-full h-20 text-gray-400 flex flex-row items-center justify-center">
-          प्राप्त निधियों की सूची देखें
-        </h1>
-      )}
+        <p className="text-sm text-muted mt-1">
+          {language == "english"
+            ? "View the list of funds received, year by year"
+            : "प्राप्त निधियों की सूची देखें"}
+        </p>
+      </div>
       <div
-        className="w-full h-[80vh] py-8 overflow-x-hidden overflow-y-scroll "
-        style={{ scrollbarWidth: "none" }}
+        data-lenis-prevent
+        className="w-full h-[78vh] py-6 overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         {fundsData && fundsData.length == 0 && <NoDataFound />}
-
-        {fundsData
-          ? fundsData.map((data, index) => {
-              return <FundCard data={data} key={index} />;
-            })
-          : "No Data Found"}
-        <div className="w-full h-20"></div>
+        {fundsData &&
+          fundsData.map((data, index) => <FundCard data={data} key={index} />)}
+        <div className="w-full h-16"></div>
       </div>
     </div>
   );

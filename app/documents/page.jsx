@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import DocumentCard from "../component/DocumentCard";
+import NoDataFound from "../component/NoDataFound";
 import Link from "next/link";
 import { useGlobalContext } from "../context/context";
 
@@ -23,29 +24,31 @@ const Page = () => {
     fetchData();
   }, []);
   return (
-    <div className="w-full h-[80vh] overflow-hidden flex flex-col items-center my-4  ">
-     {userData.userType=="admin" && <Link
-        href={"/documents/upload"}
-        className="w-[10vh] h-[10vh]  fixed bottom-10 right-8"
-        style={{ borderRadius: "50%" }}
-      >
-        <img
-          width="90"
-          height="90"
-          className="hover:rotate-90 transition-all duration-200"
-          src="https://img.icons8.com/color/48/plus--v1.png"
-          alt="plus--v1"
-        />
-      </Link>}
-      {language == "english" ? (
-        <h1 className="my-6 text-2xl font-medium">Documents</h1>
-      ) : (
-        <h1 className="my-6 text-2xl font-medium">दस्तावेज़</h1>
-      )}{" "}
-      <div className="flex flex-col items-center my-0 overflow-y-auto">
-        {document.map((data, index) => {
-          return <DocumentCard key={index} data={data} />;
-        })}
+    <div className="w-full min-h-[91vh] bg-paper flex flex-col items-center">
+      {userData.userType == "admin" && (
+        <Link
+          href={"/documents/upload"}
+          className="fixed bottom-8 right-8 z-40 btn-primary rounded-full w-14 h-14 p-0 text-2xl shadow-pop"
+          aria-label="Upload document"
+        >
+          +
+        </Link>
+      )}
+      <div className="w-full border-b border-line px-6 py-6 text-center">
+        <h1 className="text-2xl font-semibold text-ink">
+          {language == "english" ? "Documents" : "दस्तावेज़"}
+        </h1>
+        <p className="text-sm text-muted mt-1">
+          {language == "english"
+            ? "Official records and circulars"
+            : "आधिकारिक दस्तावेज़ और परिपत्र"}
+        </p>
+      </div>
+      <div className="w-full flex flex-col items-center py-6 overflow-y-auto no-scrollbar">
+        {document.length == 0 && <NoDataFound />}
+        {document.map((data, index) => (
+          <DocumentCard key={index} data={data} />
+        ))}
       </div>
     </div>
   );

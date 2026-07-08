@@ -9,30 +9,38 @@ export default function Page() {
   const { edgestore } = useEdgeStore();
   const [progress, setProgress] = React.useState(0);
   return (
-    <div className="w-full h-[80vh] py-2">
-      <div className="w-full h-20 flex flex-row items-center justify-center text-2xl font-medium">
-        Upload Your Document
-      </div>
-      <label
-        className="w-[90%] mx-auto flex items-center justify-center border-4 text-white border-black h-[20vh] bg-gray-500  border-dashed"
-        htmlFor="file"
-      >
-       Click Here to Upload File
-      </label>
-      <input
-        name="file"
-        id="file"
-        className="hidden"
-        type="file"
-        onChange={(e) => {
-          setFile(e.target.files?.[0]);
-        //   console.log(e.target.files?.[0])
-        }}
-      />
-      <div className="w-full h-auto py-2 flex flex-row items-center justify-center my-4 px-2">
-        <button
-          className="w-[80%] h-[8vh] rounded-md bg-red-600 mx-auto relative text-white"
-          onClick={async () => {
+    <div className="w-full min-h-[91vh] bg-paper py-8 px-4">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl font-semibold text-ink text-center mb-6">
+          Upload your document
+        </h1>
+        <label
+          className="w-full flex flex-col gap-2 items-center justify-center border-2 border-dashed border-line rounded-card text-muted h-[26vh] bg-cream hover:bg-mist transition-colors cursor-pointer"
+          htmlFor="file"
+        >
+          <img
+            width="34"
+            height="34"
+            src="https://img.icons8.com/ios/50/8a8a82/upload--v1.png"
+            alt=""
+          />
+          <span className="text-sm">
+            {file ? file.name : "Click here to select a file"}
+          </span>
+        </label>
+        <input
+          name="file"
+          id="file"
+          className="hidden"
+          type="file"
+          onChange={(e) => {
+            setFile(e.target.files?.[0]);
+          }}
+        />
+        <div className="w-full py-2 flex flex-row items-center justify-center my-4">
+          <button
+            className="w-full h-12 rounded-lg bg-ink mx-auto relative text-white overflow-hidden font-medium"
+            onClick={async () => {
             if (file) {
               const res = await edgestore.publicFiles.upload({
                 file,
@@ -58,12 +66,13 @@ export default function Page() {
             }
           }}
         >
-          <span className="relative text-xl z-50 text-white">
-            {" "}
-            Upload
-          </span>
-          <span className="bg-green-500  h-full rounded-md z-20 absolute top-0 left-0 transition-all duration-150 ease-in-out" style={{width:`${progress}%`}}></span>
+          <span className="relative text-base z-50 text-white">Upload</span>
+          <span
+            className="bg-white/25 h-full z-20 absolute top-0 left-0 transition-all duration-150 ease-in-out"
+            style={{ width: `${progress}%` }}
+          ></span>
         </button>
+        </div>
       </div>
     </div>
   );

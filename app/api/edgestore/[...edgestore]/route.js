@@ -1,5 +1,11 @@
 import { initEdgeStore } from '@edgestore/server';
 import { createEdgeStoreNextHandler } from '@edgestore/server/adapters/next/app';
+import { requireEnv } from '@/app/utils/env';
+
+// Fail loudly at startup if the EdgeStore keys are missing, instead of
+// letting uploads fail later with a cryptic runtime error.
+requireEnv('EDGE_STORE_ACCESS_KEY', 'from your EdgeStore project');
+requireEnv('EDGE_STORE_SECRET_KEY', 'from your EdgeStore project');
  
 const es = initEdgeStore.create();
  

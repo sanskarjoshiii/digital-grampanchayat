@@ -69,18 +69,18 @@ try {
     }
   };
   return (
-    <div className="w-full h-[70vh] overflow-hidden flex flex-row items-center justify-center">
+    <div className="w-full min-h-[100vh] bg-cream overflow-hidden flex flex-row items-center justify-center px-4 py-10">
       <form
         onSubmit={handleSUbmit}
-        className="w-[70%] h-auto py-4 px-4 box-shadow"
+        className="ds-card w-full max-w-md py-10 px-8"
       >
-        <h1 className="text-center text-xl font-semibold py-4">
-          Forget Password
+        <h1 className="text-center text-xl font-semibold text-ink mb-6">
+          Forgot Password
         </h1>
         <div className="mb-5">
           <label
             htmlFor="email"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+            className="ds-label"
           >
             Your email
           </label>
@@ -90,7 +90,7 @@ try {
             onChange={(e) =>
               setUserData({ ...userData, email: e.target.value })
             }
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="ds-input"
             placeholder="name@gmail.com"
             required
           />
@@ -99,7 +99,7 @@ try {
           <div className="mb-5">
             <label
               htmlFor="otp"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+              className="ds-label"
             >
               Your Otp
             </label>
@@ -109,7 +109,7 @@ try {
               onChange={(e) =>
                 setUserData({ ...userData, otp: e.target.value })
               }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="ds-input"
               placeholder="Enter Otp"
               required
             />
@@ -119,7 +119,7 @@ try {
           <div className="mb-5">
             <label
               htmlFor="passowrd"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+              className="ds-label"
             >
               Enter Password
             </label>
@@ -129,14 +129,14 @@ try {
               onChange={(e) =>
                 setUserData({ ...userData, password: e.target.value })
               }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-100 dark:border-gray-200 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="ds-input"
               placeholder="Enter Otp"
               required
             />
           </div>
         )}
-        <button className="w-40 h-10 py-2 rounded-md bg-blue-500 text-white">
-          Send Otp
+        <button className="btn-primary w-full">
+          {otp ? "Change password" : "Send OTP"}
         </button>
       </form>
     </div>

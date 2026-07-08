@@ -3,74 +3,39 @@ import { useGlobalContext } from "../context/context";
 
 const VillageInfo = () => {
   const { language } = useGlobalContext();
+  const en = language == "english";
+
+  const stats = en
+    ? [
+        ["Gram Panchayat", "Chandgaon"],
+        ["LGD Code", "170972"],
+        ["Block", "Vaijapur"],
+        ["Zilla Parishad", "Sambhaji Nagar"],
+      ]
+    : [
+        ["ग्राम पंचायत", "चांदगांव"],
+        ["एलजीडी कोड", "170972"],
+        ["ब्लॉक", "वैजापुर"],
+        ["जिला परिषद", "संभाजी नगर"],
+      ];
+
   return (
-    <>
-      <div className="py-10 px-4 mb-5">
-        {language == "english" ? (
-          <p className="px-4 py-4 capitalize">
-            {" "}
-            <span className="text-black font-semibold text-red-600 text-xl">
-              Village Panchayat
+    <section className="max-w-4xl mx-auto px-4">
+      {/* Village at a glance */}
+      <p className="text-xs uppercase tracking-wide text-muted mb-3">
+        {en ? "Village at a glance" : "गाँव एक नज़र में"}
+      </p>
+      <div className="ds-panel-cream p-6 grid grid-cols-2 sm:grid-cols-4 gap-6">
+        {stats.map(([k, v]) => (
+          <div key={k} className="flex flex-col gap-1">
+            <span className="text-xs uppercase tracking-wide text-muted">
+              {k}
             </span>
-            :Chandgaon
-            <br />
-            <span className="text-black font-semibold text-red-600 text-xl">
-              LGD Code
-            </span>
-            :170972
-            <br />
-            <span className="text-black font-semibold text-red-600 text-xl">
-              Block
-            </span>
-            :vaijapur
-            <br />
-            <span className="text-black font-semibold text-red-600 text-xl">
-              Zilla Parishad
-            </span>
-            :Sambhaji Nagar
-          </p>
-        ) : (
-          <p className="px-4 py-4">
-            {" "}
-            <span className="text-black font-semibold text-red-600 text-xl">
-              ग्राम पंचायत
-            </span>
-            : चांदगांव
-            <br />
-            <span className="text-black font-semibold text-red-600 text-xl">
-              एलजीडी कोड
-            </span>
-            : 170972
-            <br />
-            <span className="text-black font-semibold text-red-600 text-xl">
-              ब्लॉक
-            </span>
-            : वैजापुर
-            <br />
-            <span className="text-black font-semibold text-red-600 text-xl">
-              जिला परिषद
-            </span>
-            : संभाजी नगर
-          </p>
-        )}
-        {language == "english" ? (
-          <p className="card-text px-4 ">
-            <strong className="font-bold"> Sarpanch Details:-</strong><br></br>
-            Name:-Manisha Ganesh Thengde<br></br>
-            Mobile no :-9673338564<br></br>
-            Email id :- ganstgda@gmail.com<br></br>
-          </p>
-        ) : (
-          <p className="card-text px-4 ">
-            <strong className="font-bold">सरपंच विवरण:-</strong><br></br>
-            नाम:- मनीषा गणेश थेंगड़े<br></br>
-            मोबाइल नंबर:- 9673338564<br></br>
-            ईमेल आईडी:- ganstgda@gmail.com<br></br>
-          </p>
-        )}
-        <hr />
+            <span className="text-base font-semibold text-ink">{v}</span>
+          </div>
+        ))}
       </div>
-    </>
+    </section>
   );
 };
 export default VillageInfo;
