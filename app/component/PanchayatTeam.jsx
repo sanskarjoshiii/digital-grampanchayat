@@ -1,12 +1,13 @@
 "use client";
 import { useGlobalContext } from "../context/context";
+import { CURRENT_SARPANCH } from "../config/panchayat";
 
 // Each member can carry a real photo URL in `photo` (e.g. "/team/ramesh.jpg"
 // placed in /public, or an uploaded image URL). Leave empty to show the frame.
 const team = {
   sarpanch: {
     photo: "",
-    name: "Manisha Ganesh Thengde",
+    name: CURRENT_SARPANCH,
     role_en: "Sarpanch",
     role_hi: "सरपंच",
     mobile: "9673338564",

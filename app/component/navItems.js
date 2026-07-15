@@ -20,10 +20,10 @@ export const navItems = [
     img: "https://img.icons8.com/ios/50/1f1f1f/coins--v1.png",
   },
   {
-    en: "Income / Expenditure",
-    hi: "उत्पन्न / खर्च",
-    href: "/panchayat_funds/income_funds",
-    img: "https://img.icons8.com/ios/50/1f1f1f/economic-improvement.png",
+    en: "Funds Charts",
+    hi: "निधि तक्ते",
+    href: "/panchayat_funds/charts",
+    img: "https://img.icons8.com/ios/50/1f1f1f/combo-chart--v1.png",
   },
   {
     en: "Documents",

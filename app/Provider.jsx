@@ -6,6 +6,7 @@ import { useGlobalContext } from "./context/context";
 import Header from "./component/Header";
 import Sidebar from "./component/Sidebar";
 import SmoothScroll from "./component/SmoothScroll";
+import RouteProgress from "./component/RouteProgress";
 import { usePathname } from "next/navigation";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 const Provider = ({ children }) => {
@@ -13,6 +14,7 @@ const Provider = ({ children }) => {
   const pathname = usePathname();
   return (
     <>
+      <RouteProgress />
       <SmoothScroll />
       {pathname != "/login" &&
       pathname != "/signup" &&

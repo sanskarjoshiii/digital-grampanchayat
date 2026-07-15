@@ -100,6 +100,92 @@ body {
   scrollbar-width: none;
 }
 
+/* ---------- Nearby Services map ---------- */
+/* Minimal monochrome teardrop marker (L.divIcon, see VillageMap.jsx) */
+.village-marker {
+  background: transparent;
+  border: none;
+}
+.vm-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f1f1f;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(31, 31, 31, 0.3);
+}
+.vm-pin > span {
+  transform: rotate(45deg);
+  display: flex;
+  color: #ffffff;
+  line-height: 0;
+}
+/* Popup styling to match the design system */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(31, 31, 31, 0.18);
+  border: 1px solid #e6e6e1;
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
+  font-family: "General Sans", ui-sans-serif, system-ui, sans-serif;
+}
+.vm-popup-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: #1f1f1f;
+  margin-bottom: 8px;
+}
+.vm-popup-title .vm-popup-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #1f1f1f;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+.vm-popup-row {
+  font-size: 12.5px;
+  color: #6b6b63;
+  margin: 3px 0;
+}
+.vm-popup-row b {
+  color: #1f1f1f;
+  font-weight: 500;
+}
+.vm-popup-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  background: #1f1f1f;
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size: 12.5px;
+  text-decoration: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.vm-popup-btn:hover {
+  background: #000000;
+}
+/* Keep the Leaflet map inside its rounded container */
+.leaflet-container {
+  font-family: "General Sans", ui-sans-serif, system-ui, sans-serif;
+  background: #eef0f2;
+}
+
 /* ---------- Lenis smooth scroll ---------- */
 html.lenis,
 html.lenis body {
