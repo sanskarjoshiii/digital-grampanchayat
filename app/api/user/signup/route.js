@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { email, password, name, otp } = await req.json();
+    const { email, password, name, username, profile = "", otp } = await req.json();
     // const user
   await  connectToDB();
     const record = await Otp.findOne({ email, otp });
@@ -27,13 +27,21 @@ export async function POST(req) {
       );
     }
 
-    const user = await User.create({ email, password, userType: "user", name });
+    const normalizedUsername = username?.trim().toLowerCase();
+    if (!/^[a-z0-9_]{3,20}$/.test(normalizedUsername || "")) {
+      return NextResponse.json({ message: "Username must be 3–20 letters, numbers, or underscores" }, { status: 400 });
+    }
+    if (await User.exists({ username: normalizedUsername })) {
+      return NextResponse.json({ message: "This username is already taken" }, { status: 409 });
+    }
+    const user = await User.create({ email, password, userType: "user", name, username: normalizedUsername, profile });
     await Otp.findOneAndDelete({ email });
     return NextResponse.json(
       { message: "Account Created Successfully" },
       { status: 200 }
     );
   } catch (error) {
+    if (error?.code === 11000) return NextResponse.json({ message: "This username is already taken" }, { status: 409 });
     return NextResponse.json({ message: error.message }, { status: 400 });
   }
 }

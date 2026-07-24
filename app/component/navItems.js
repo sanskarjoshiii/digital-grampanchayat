@@ -8,6 +8,12 @@ export const navItems = [
     img: "https://img.icons8.com/ios/50/1f1f1f/home--v1.png",
   },
   {
+    en: "Community",
+    hi: "समुदाय",
+    href: "/community",
+    img: "https://img.icons8.com/ios/50/1f1f1f/conference-call--v1.png",
+  },
+  {
     en: "About",
     hi: "पंचायत बद्दल",
     href: "/about",

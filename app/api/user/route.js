@@ -2,6 +2,18 @@ import User from "@/app/modals/User";
 import { connectToDB } from "@/app/utils/connection";
 import { NextResponse } from "next/server";
 
+export async function GET(req) {
+  try {
+    await connectToDB();
+    const username = new URL(req.url).searchParams.get("username")?.trim().toLowerCase();
+    if (!username) return NextResponse.json({ message: "Username is required" }, { status: 400 });
+    const exists = await User.exists({ username });
+    return NextResponse.json({ available: !exists });
+  } catch (error) {
+    return NextResponse.json({ message: "Could not verify username" }, { status: 400 });
+  }
+}
+
 export async function POST(req){
     try {
         await connectToDB();
@@ -10,7 +22,7 @@ export async function POST(req){
         if(!data){
             throw new Error("User Not Found")
         }
-        return NextResponse.json({name:data.name,email:data.email,phoneNo:data.phoneNo,profile:data.profile||"",userType:data.userType},{status:200})
+        return NextResponse.json({name:data.name,username:data.username||"",email:data.email,phoneNo:data.phoneNo,profile:data.profile||"",userType:data.userType},{status:200})
     } catch (error) {
         return NextResponse.json({message:"Invalid User",error:error.message},{status:404})
     }

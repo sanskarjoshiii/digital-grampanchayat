@@ -5,13 +5,40 @@ import toast from "react-hot-toast";
 import { redirect, useRouter } from "next/navigation";
 import LoginBanner from "../component/LoginBanner";
 import { useGlobalContext } from "../context/context";
+import { useEdgeStore } from "@/lib/edgestore";
 
 const Page = () => {
   const [openModal,setOpenModal]=useState(false);
   const router = useRouter();
   const [otp,setOtp]=useState("")
   const {setLoader}=useGlobalContext()
-  const [userData, setUserData] = useState({ email: "", password: "",name:"" });
+  const { edgestore } = useEdgeStore();
+  const [userData, setUserData] = useState({ email: "", password: "", username: "", name:"", profile: "" });
+  const [usernameStatus, setUsernameStatus] = useState("");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const checkUsername = async () => {
+    const username = userData.username.trim().toLowerCase();
+    if (!username) return setUsernameStatus("");
+    if (!/^[a-z0-9_]{3,20}$/.test(username)) return setUsernameStatus("Use 3–20 lowercase letters, numbers, or underscores.");
+    try {
+      const response = await fetch(`/api/user?username=${encodeURIComponent(username)}`);
+      const data = await response.json();
+      setUsernameStatus(data.available ? "Available" : "This username is already taken.");
+    } catch { setUsernameStatus("Could not check username right now."); }
+  };
+
+  const uploadPhoto = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const result = await edgestore.publicFiles.upload({ file });
+      setUserData({ ...userData, profile: result.url });
+      toast.success("Profile photo added");
+    } catch { toast.error("Could not upload profile photo"); }
+    setUploadingPhoto(false);
+  };
   const handleOtp =async () => {
     if(userData.email==""){
       return toast.error("Enter a valid email")
@@ -41,7 +68,13 @@ setLoader(false)
     if(userData.password==""){
       return toast.error("Enter a valid password")
     }
-    if(userData.name=="" && userData.name.length<3){
+    if(!/^[a-z0-9_]{3,20}$/.test(userData.username.trim().toLowerCase())){
+      return toast.error("Choose a valid username first")
+    }
+    if(usernameStatus !== "Available"){
+      return toast.error("Please choose an available username")
+    }
+    if(userData.name=="" || userData.name.length<3){
       return toast.error("Enter a valid name or name length must be greater than 2")
     }
     setLoader(true)
@@ -50,7 +83,7 @@ setLoader(false)
       headers: {
           'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email:userData.email,password:userData.password,name:userData.name,otp:otp })
+      body: JSON.stringify({ email:userData.email,password:userData.password,username:userData.username,name:userData.name,profile:userData.profile,otp:otp })
   });
   const res= await response.json();
 if(response.status==200){
@@ -73,6 +106,30 @@ setLoader(false)
         <h1 className="w-full text-center font-semibold text-xl mb-6 text-ink">
           Create your account
         </h1>
+        <div className="mb-6 flex flex-col items-center gap-2">
+          <label htmlFor="profile" className="group relative cursor-pointer">
+            <img src={userData.profile || "/merilogo.png"} alt="Profile preview" className="h-20 w-20 rounded-full border border-line object-cover" />
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-ink/50 px-2 text-center text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">{uploadingPhoto ? "Uploading…" : "Add photo"}</span>
+          </label>
+          <input id="profile" type="file" accept="image/*" className="hidden" onChange={uploadPhoto} disabled={uploadingPhoto} />
+          <p className="text-xs text-muted">Profile photo is optional</p>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="username" className="ds-label">
+            Unique username
+          </label>
+          <input
+            type="text"
+            id="username"
+            value={userData.username}
+            onChange={(e) => { setUserData({ ...userData, username: e.target.value.toLowerCase().replace(/\s/g, "") }); setUsernameStatus(""); }}
+            onBlur={checkUsername}
+            className="ds-input"
+            placeholder="e.g. ramesh_patil"
+            required
+          />
+          {usernameStatus && <p className={`mt-1 text-xs ${usernameStatus === "Available" ? "text-green-700" : "text-red-700"}`}>{usernameStatus}</p>}
+        </div>
         <div className="mb-4">
           <label htmlFor="name" className="ds-label">
             Your name

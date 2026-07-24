@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
               },
             }}
           />
-          <div className="w-full max-h-[99vh]">
+          <div className="w-full">
             <Provider>{children}</Provider>
           </div>
         </AppProvider>
