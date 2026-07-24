@@ -87,9 +87,8 @@ setLoader(false)
   });
   const res= await response.json();
 if(response.status==200){
-  toast.success("Account Created Successfully");
-  localStorage.setItem("email",userData.email);
-  router.push("/")
+  toast.success("Account created — please log in");
+  router.push("/login")
 }
 else{
   toast.error(res.message)
