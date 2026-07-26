@@ -22,7 +22,7 @@ const Footer = () => {
         ))}
       </ul>
       <p className="text-center text-xs text-muted mt-6">
-        © {new Date().getFullYear()} MeriPanchayat — Digital Gram Panchayat
+        © {new Date().getFullYear()} PanchayatX — Digital Gram Panchayat
       </p>
     </footer>
   );

@@ -42,8 +42,8 @@ const Sidebar = () => {
           </div>
         ) : (
           <div className="w-full px-4 py-5 border-b border-line flex items-center gap-2">
-            <img src="/merilogo.png" width={30} height={30} alt="logo" />
-            <span className="font-semibold text-ink">MeriPanchayat</span>
+            <img src="/panchayatx-logo.png" width={30} height={30} alt="logo" />
+            <span className="font-semibold text-ink">PanchayatX</span>
           </div>
         )}
 

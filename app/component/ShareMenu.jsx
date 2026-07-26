@@ -19,7 +19,7 @@ export default function ShareMenu({ post }) {
     typeof window !== "undefined"
       ? `${window.location.origin}/community`
       : "/community";
-  const text = `${post.title} — MeriPanchayat Community`;
+  const text = `${post.title} — PanchayatX Community`;
   const u = encodeURIComponent(url);
   const t = encodeURIComponent(text);
 

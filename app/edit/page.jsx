@@ -41,7 +41,7 @@ const Page = () => {
         <div className="mb-6 flex flex-col items-center gap-2">
           <label htmlFor="uploadimg" className="cursor-pointer relative group">
             <img
-              src={!userData.profile ? "/merilogo.png" : userData.profile}
+              src={!userData.profile ? "/panchayatx-logo.png" : userData.profile}
               width={84}
               height={84}
               className="bg-paper h-[84px] w-[84px] object-cover rounded-full border border-line"

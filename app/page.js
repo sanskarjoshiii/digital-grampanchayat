@@ -17,7 +17,7 @@ export default function Home() {
       ? {
           eyebrow: "Digital Gram Panchayat",
           welcome: "Welcome to",
-          brand: "MeriPanchayat",
+          brand: "PanchayatX",
           tagline:
             "Transparent, accessible and paperless village governance — funds, documents and services, in one place.",
           cta: "Know more about us",
@@ -34,7 +34,7 @@ export default function Home() {
       : {
           eyebrow: "डिजिटल ग्राम पंचायत",
           welcome: "आपका स्वागत है",
-          brand: "मेरी पंचायत",
+          brand: "PanchayatX",
           tagline:
             "पारदर्शी, सुलभ और कागज़-रहित ग्राम शासन — निधि, दस्तऐवज और सेवाएँ, एक ही स्थान पर।",
           cta: "हमारे बारे में अधिक जानें",

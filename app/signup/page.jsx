@@ -107,7 +107,7 @@ setLoader(false)
         </h1>
         <div className="mb-6 flex flex-col items-center gap-2">
           <label htmlFor="profile" className="group relative cursor-pointer">
-            <img src={userData.profile || "/merilogo.png"} alt="Profile preview" className="h-20 w-20 rounded-full border border-line object-cover" />
+            <img src={userData.profile || "/panchayatx-logo.png"} alt="Profile preview" className="h-20 w-20 rounded-full border border-line object-cover" />
             <span className="absolute inset-0 flex items-center justify-center rounded-full bg-ink/50 px-2 text-center text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">{uploadingPhoto ? "Uploading…" : "Add photo"}</span>
           </label>
           <input id="profile" type="file" accept="image/*" className="hidden" onChange={uploadPhoto} disabled={uploadingPhoto} />

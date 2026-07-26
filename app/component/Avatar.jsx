@@ -11,7 +11,7 @@ const Avatar = () => {
           className="rounded-full h-12 w-12 object-cover border border-line"
           width={48}
           height={48}
-          src={!userData?.profile ? "/merilogo.png" : userData.profile}
+          src={!userData?.profile ? "/panchayatx-logo.png" : userData.profile}
           alt="profile"
         />
         <div className="flex flex-col leading-tight">

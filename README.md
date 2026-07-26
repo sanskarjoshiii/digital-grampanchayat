@@ -1,4 +1,4 @@
-# MeriPanchayat — Digital Gram Panchayat
+# PanchayatX — Digital Gram Panchayat
 
 > **Mission:** Bring the Gram Panchayat office into every villager's phone — making local governance transparent, accessible, and paperless, in the villager's own language.
 
@@ -36,7 +36,7 @@ The project rests on three pillars:
 - **Access** — documents, services, and information without visiting an office.
 - **Inclusion** — a multilingual interface so non-English speakers can use it.
 
-Concretely, MeriPanchayat aims to:
+Concretely, PanchayatX aims to:
 
 - **Bring financial transparency** to village governance by publishing scheme-wise fund inflow and expenditure that any resident can inspect.
 - **Provide a single digital touchpoint** for a village — funds, documents, and service listings in one place.
@@ -129,7 +129,7 @@ The role is stored on the user record as `userType` (`"user"` or `"admin"`). The
 
 ## Architecture & How It Works
 
-MeriPanchayat is a **full-stack Next.js App Router application** — both the UI and the backend live in the same project.
+PanchayatX is a **full-stack Next.js App Router application** — both the UI and the backend live in the same project.
 
 ```
 Browser (React client components)
@@ -372,4 +372,4 @@ The following roadmap deepens the project's three pillars (transparency, access,
 
 ---
 
-*MeriPanchayat — making village governance transparent, accessible, and digital.*
+*PanchayatX — making village governance transparent, accessible, and digital.*

@@ -39,9 +39,9 @@ const Header = () => {
 
         {/* Brand */}
         <Link href="/" className="flex items-center gap-3 shrink-0 mr-1 xl:mr-2">
-          <img src="/merilogo.png" width={34} height={34} alt="logo" />
+          <img src="/panchayatx-logo.png" width={34} height={34} alt="logo" />
           <span className="font-semibold text-lg text-ink hidden sm:inline tracking-tight">
-            MeriPanchayat
+            PanchayatX
           </span>
         </Link>
 
@@ -98,7 +98,7 @@ const Header = () => {
               >
                 <img
                   className="w-7 h-7 rounded-full object-cover border border-line"
-                  src={!userData.profile ? "/merilogo.png" : userData.profile}
+                  src={!userData.profile ? "/panchayatx-logo.png" : userData.profile}
                   alt="profile"
                 />
                 <span className="text-sm text-ink max-w-[100px] truncate">

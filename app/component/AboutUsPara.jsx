@@ -9,23 +9,23 @@ const AboutUsPara = () => {
   const copy = en
     ? {
         eyebrow: "About the project",
-        heading: "What is MeriPanchayat?",
+        heading: "What is PanchayatX?",
         intro:
-          "MeriPanchayat is the digital face of Chandgaon Gram Panchayat — one place where every resident can see how public funds are used, read official documents, and find nearby services, all in their own language.",
+          "PanchayatX is the digital face of Chandgaon Gram Panchayat — one place where every resident can see how public funds are used, read official documents, and find nearby services, all in their own language.",
         storyTitle: "Why we built this",
         story:
-          "For years, information about village funds, schemes and records stayed locked inside the Panchayat office, and residents had to visit in person just to ask a simple question. MeriPanchayat was built to change that — to make local governance open and to put the Panchayat in every villager's pocket.",
+          "For years, information about village funds, schemes and records stayed locked inside the Panchayat office, and residents had to visit in person just to ask a simple question. PanchayatX was built to change that — to make local governance open and to put the Panchayat in every villager's pocket.",
         amenitiesTitle: "Village amenities",
         gov: "A government-sponsored digital initiative, built for the betterment of rural citizens.",
       }
     : {
         eyebrow: "परियोजना के बारे में",
-        heading: "मेरी पंचायत क्या है?",
+        heading: "PanchayatX क्या है?",
         intro:
-          "मेरी पंचायत चांदगांव ग्राम पंचायत का डिजिटल चेहरा है — एक ऐसी जगह जहाँ हर नागरिक अपनी भाषा में देख सकता है कि सार्वजनिक निधि का उपयोग कैसे होता है, आधिकारिक दस्तऐवज पढ़ सकता है और नज़दीकी सेवाएँ खोज सकता है।",
+          "PanchayatX चांदगांव ग्राम पंचायत का डिजिटल चेहरा है — एक ऐसी जगह जहाँ हर नागरिक अपनी भाषा में देख सकता है कि सार्वजनिक निधि का उपयोग कैसे होता है, आधिकारिक दस्तऐवज पढ़ सकता है और नज़दीकी सेवाएँ खोज सकता है।",
         storyTitle: "हमने यह क्यों बनाया",
         story:
-          "वर्षों तक गाँव की निधि, योजनाओं और अभिलेखों की जानकारी पंचायत कार्यालय तक सीमित रही, और नागरिकों को एक साधारण प्रश्न पूछने के लिए भी वहाँ जाना पड़ता था। मेरी पंचायत इसी को बदलने के लिए बनाई गई — ताकि स्थानीय शासन पारदर्शी बने और पंचायत हर ग्रामीण की जेब में हो।",
+          "वर्षों तक गाँव की निधि, योजनाओं और अभिलेखों की जानकारी पंचायत कार्यालय तक सीमित रही, और नागरिकों को एक साधारण प्रश्न पूछने के लिए भी वहाँ जाना पड़ता था। PanchayatX इसी को बदलने के लिए बनाया गया — ताकि स्थानीय शासन पारदर्शी बने और पंचायत हर ग्रामीण की जेब में हो।",
         amenitiesTitle: "गाँव की सुविधाएँ",
         gov: "ग्रामीण नागरिकों के कल्याण के लिए बनाई गई एक सरकार-प्रायोजित डिजिटल पहल।",
       };
@@ -82,7 +82,7 @@ const AboutUsPara = () => {
 
   return (
     <section className="max-w-4xl mx-auto px-4 mt-14">
-      {/* What is MeriPanchayat */}
+      {/* What is PanchayatX */}
       <div className="text-center max-w-2xl mx-auto">
         <p className="text-xs uppercase tracking-wide text-muted">
           {copy.eyebrow}

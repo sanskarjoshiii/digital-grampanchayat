@@ -8,13 +8,13 @@ const Name = ({ breaks }) => {
     <div className="leading-tight">
       {language == "english" ? (
         <>
-          <span className="font-semibold text-ink">MeriPanchayat</span>
+          <span className="font-semibold text-ink">PanchayatX</span>
           {breaks ? <br /> : " "}
           <span className="text-xs text-muted">Digital Gram Panchayat</span>
         </>
       ) : (
         <>
-          <span className="font-semibold text-ink">मेरी पंचायत</span>
+          <span className="font-semibold text-ink">PanchayatX</span>
           {breaks ? <br /> : " "}
           <span className="text-xs text-muted">डिजिटल ग्राम पंचायत</span>
         </>

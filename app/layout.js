@@ -4,7 +4,7 @@ import { AppProvider } from "./context/context";
 import Provider from "./Provider";
 
 export const metadata = {
-  title: "MeriPanchayat — Digital Gram Panchayat",
+  title: "PanchayatX — Digital Gram Panchayat",
   description:
     "Digital Gram Panchayat — transparent, accessible, multilingual village governance.",
 };
