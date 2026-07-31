@@ -14,6 +14,21 @@ export const fmtDate = (d) => {
   });
 };
 
+// "12 Mar 2026, 4:35 pm" — complaints need the time, not just the day.
+export const fmtDateTime = (d) => {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (isNaN(date)) return "—";
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 export const yearOf = (d) => {
   if (!d) return "";
   const date = new Date(d);

@@ -33,7 +33,9 @@ const Page = () => {
     if (!file) return;
     setUploadingPhoto(true);
     try {
-      const result = await edgestore.publicFiles.upload({ file });
+      // profileImages: the only bucket that accepts an upload without a session,
+      // because the account does not exist yet at this point in signup.
+      const result = await edgestore.profileImages.upload({ file });
       setUserData({ ...userData, profile: result.url });
       toast.success("Profile photo added");
     } catch { toast.error("Could not upload profile photo"); }

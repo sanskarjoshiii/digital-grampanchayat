@@ -1,6 +1,7 @@
 import Otp from "@/app/modals/Otp";
 import User from "@/app/modals/User";
 import { connectToDB } from "@/app/utils/connection";
+import { clearUploadContext, sessionCookie, signSession } from "@/app/utils/session";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -36,10 +37,14 @@ export async function POST(req) {
     }
     const user = await User.create({ email, password, userType: "user", name, username: normalizedUsername, profile });
     await Otp.findOneAndDelete({ email });
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "Account Created Successfully" },
       { status: 200 }
     );
+    const token = signSession(user.email);
+    if (token) response.cookies.set(sessionCookie(token));
+    clearUploadContext(response);
+    return response;
   } catch (error) {
     if (error?.code === 11000) return NextResponse.json({ message: "This username is already taken" }, { status: 409 });
     return NextResponse.json({ message: error.message }, { status: 400 });

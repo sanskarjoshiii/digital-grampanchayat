@@ -2,17 +2,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "../context/context";
-import { navItems, label } from "./navItems";
+import { navItemsFor, label } from "./navItems";
 
 const ModuleSearch = () => {
-  const { language } = useGlobalContext();
+  const { language, userData } = useGlobalContext();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const boxRef = useRef(null);
 
-  const results = navItems.filter((item) => {
+  const results = navItemsFor(userData).filter((item) => {
     const q = query.trim().toLowerCase();
     if (!q) return true;
     return (

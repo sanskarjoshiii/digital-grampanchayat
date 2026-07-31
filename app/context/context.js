@@ -38,23 +38,36 @@ export const AppProvider = ({ children }) => {
       setUserData({ ...userData, [e.target.name]: e.target.value });
     }
   };
-  //to get user current data
+  const emptyUser = { email: "", phoneNo: "", name: "", profile: "" };
+
+  // Ask the server who this browser is, using the signed session cookie rather
+  // than the email in localStorage. localStorage outlives the cookie, so
+  // trusting it left the UI looking signed in while uploads were rejected as
+  // anonymous — with a misleading "check your connection" error.
   const getUserData = async () => {
-    const response = await fetch("/api/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: localStorage.getItem("email") }),
-    });
-    if (response.status == 200) {
-      const res = await response.json();
-      console.log(res);
-      setUserData(res);
-    } else {
-      // toast.error("check your internet connection")
-      // router.push("/login")
+    let response;
+    try {
+      response = await fetch("/api/user/session");
+    } catch {
+      return; // Offline — keep whatever is on screen rather than signing out.
     }
+    if (response.status === 503) return; // Server-side problem, not a logout.
+
+    const result = await response.json().catch(() => ({}));
+
+    if (result.authenticated) {
+      setUserData(result.user);
+      localStorage.setItem("email", result.user.email);
+      return;
+    }
+
+    // No valid session. If the browser still believed it was logged in, say so
+    // plainly instead of letting the next action fail for no visible reason.
+    if (localStorage.getItem("email")) {
+      localStorage.removeItem("email");
+      toast("Your session has ended — please log in again", { icon: "🔒" });
+    }
+    setUserData(emptyUser);
   };
   useEffect(() => {
     getUserData();

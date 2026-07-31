@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../context/context";
-import { navItems, label } from "./navItems";
+import { navItemsFor, label } from "./navItems";
 import ModuleSearch from "./ModuleSearch";
 
 const Header = () => {
@@ -14,8 +14,11 @@ const Header = () => {
   const router = useRouter();
   const isLoggedIn = Boolean(userData?.email);
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.removeItem("email");
+    // Drops the httpOnly session cookie as well; ignore failures so a network
+    // hiccup can never trap someone in a signed-in state.
+    await fetch("/api/user/logout", { method: "POST" }).catch(() => {});
     setUserData({ email: "", phoneNo: "", name: "", profile: "" });
     router.push("/login");
   };
@@ -52,7 +55,7 @@ const Header = () => {
 
         {/* Desktop: horizontal nav tabs with sliding active pill */}
         <nav className="hidden lg:flex items-center gap-1 mx-auto">
-          {navItems.map((item) => {
+          {navItemsFor(userData).map((item) => {
             const active = pathname === item.href;
             return (
               <Link

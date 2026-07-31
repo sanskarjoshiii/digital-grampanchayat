@@ -1,5 +1,6 @@
 import User from "@/app/modals/User";
 import { connectToDB } from "@/app/utils/connection";
+import { clearUploadContext, sessionCookie, signSession } from "@/app/utils/session";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -15,10 +16,17 @@ export async function POST(req) {
       );
     }
     if (userlogin.password == password) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "Login Sucessfully" },
         { status: 200 }
       );
+      // Signed, httpOnly cookie so the server can verify this account later
+      // (file uploads). The client keeps using localStorage as before.
+      const token = signSession(userlogin.email);
+      if (token) response.cookies.set(sessionCookie(token));
+      // Otherwise a context cached while signed out keeps uploads rejected.
+      clearUploadContext(response);
+      return response;
     } else {
       return NextResponse.json(
         { message: "Invalid Password" },

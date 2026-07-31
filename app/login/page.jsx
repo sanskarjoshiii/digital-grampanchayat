@@ -6,15 +6,20 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useGlobalContext } from "../context/context";
 import LoginBanner from "../component/LoginBanner";
+import { useEdgeStore } from "@/lib/edgestore";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Using react-icons for eye icons
 
 const Page = () => {
-  
+
   const router = useRouter();
   const [userData, setUserData] = useState({ email: "", password: ""});
   const [showPassword, setShowPassword] = useState(false);
 
   const {getUserData,setLoader}=useGlobalContext();
+  // EdgeStore resolves the upload context once when the provider mounts. After
+  // logging in we ask it to resolve again, otherwise a context cached while
+  // signed out keeps rejecting this account's uploads.
+  const { reset: resetEdgeStore } = useEdgeStore();
   const handleSubmit=async(e)=>{
     e.preventDefault();
     setLoader(true)
@@ -28,6 +33,7 @@ const Page = () => {
     if(response.status==200){
       toast.success("Login Successfully");
       localStorage.setItem("email",userData.email)
+      await resetEdgeStore().catch(() => {});
       getUserData();
       router.push("/")
     }

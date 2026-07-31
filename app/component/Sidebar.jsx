@@ -4,7 +4,7 @@ import Avatar from "./Avatar";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useGlobalContext } from "../context/context";
-import { navItems, label } from "./navItems";
+import { navItemsFor, label } from "./navItems";
 
 const Sidebar = () => {
   const { language, openSidebar, setOpenSidebar, setUserData, userData } =
@@ -51,7 +51,7 @@ const Sidebar = () => {
           <p className="px-5 pb-2 text-xs font-medium uppercase tracking-wide text-muted">
             {language == "english" ? "Menu" : "मेनू"}
           </p>
-          {navItems.map((item) => {
+          {navItemsFor(userData).map((item) => {
             const active = pathname === item.href;
             return (
               <Link
@@ -78,8 +78,9 @@ const Sidebar = () => {
         <div className="w-full px-4 py-4 border-t border-line flex flex-col gap-2">
           {isLoggedIn ? (
             <button
-              onClick={() => {
+              onClick={async () => {
                 localStorage.removeItem("email");
+                await fetch("/api/user/logout", { method: "POST" }).catch(() => {});
                 setUserData({ email: "", phoneNo: "", name: "", profile: "" });
                 setOpenSidebar(false);
                 router.push("/login");

@@ -45,5 +45,28 @@ export const navItems = [
   },
 ];
 
+// Complaints are split by role: villagers track their own submissions, the
+// office works from the dashboard. Neither sees the other's page in the nav.
+const villagerComplaints = {
+  en: "My Complaints",
+  hi: "माझ्या तक्रारी",
+  href: "/complaints",
+  img: "https://img.icons8.com/ios/50/1f1f1f/complaint.png",
+};
+
+const officeComplaints = {
+  en: "Complaints",
+  hi: "तक्रारी",
+  href: "/admin/complaints",
+  img: "https://img.icons8.com/ios/50/1f1f1f/complaint.png",
+};
+
+/** Nav modules for this visitor. Signed-out users see the public modules only. */
+export const navItemsFor = (userData) => {
+  if (userData?.userType === "admin") return [...navItems, officeComplaints];
+  if (userData?.email) return [...navItems, villagerComplaints];
+  return navItems;
+};
+
 export const label = (item, language) =>
   language == "english" ? item.en : item.hi;

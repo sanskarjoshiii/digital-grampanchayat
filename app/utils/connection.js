@@ -11,15 +11,20 @@ export const connectToDB = async () => {
 
     // Validate outside the try so a missing var fails loudly instead of being swallowed.
     const dbUrl = requireEnv("DB_URL", "your MongoDB Atlas connection string");
+    // Keep dev and production data apart: set DB_NAME on the production host.
+    // Defaults to the original name so existing setups keep working untouched.
+    const dbName = process.env.DB_NAME?.trim() || "meripanchayat";
     try {
-        await mongoose.connect(`${dbUrl}meripanchayat`, {
-            dbName: "meripanchayat",
+        // Pass the URL untouched and let dbName select the database, rather than
+        // concatenating it — appending breaks any URL with a path or ?query.
+        await mongoose.connect(dbUrl, {
+            dbName,
             // Fail fast (10s) if the cluster is unreachable — e.g. the current IP
             // is not whitelisted in Atlas Network Access — instead of hanging.
             serverSelectionTimeoutMS: 10000,
          })
         isConnected = true;
-        console.log("MongoDB connected");
+        console.log(`MongoDB connected (database: ${dbName})`);
     } catch (error) {
         isConnected = false;
         console.log(error);

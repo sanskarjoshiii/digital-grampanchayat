@@ -7,11 +7,17 @@ if (!email || !password) {
   process.exit(1);
 }
 
-const envLine = fs
-  .readFileSync(".env.local", "utf8")
-  .split(/\r?\n/)
-  .find((line) => line.startsWith("DB_URL="));
-const dbUrl = envLine?.slice("DB_URL=".length).trim().replace(/^['"]|['"]$/g, "");
+const envLines = fs.readFileSync(".env.local", "utf8").split(/\r?\n/);
+const readEnv = (key) =>
+  envLines
+    .find((line) => line.startsWith(`${key}=`))
+    ?.slice(key.length + 1)
+    .trim()
+    .replace(/^['"]|['"]$/g, "");
+
+const dbUrl = readEnv("DB_URL");
+// Must match app/utils/connection.js, or the seeded admin lands in the wrong database.
+const dbName = process.env.DB_NAME?.trim() || readEnv("DB_NAME") || "meripanchayat";
 
 if (!dbUrl) {
   console.error("DB_URL is not configured in .env.local");
@@ -19,8 +25,9 @@ if (!dbUrl) {
 }
 
 (async () => {
-  await mongoose.connect(`${dbUrl}meripanchayat`, {
-    dbName: "meripanchayat",
+  console.log(`Seeding into database: ${dbName}`);
+  await mongoose.connect(dbUrl, {
+    dbName,
     serverSelectionTimeoutMS: 10000,
   });
 

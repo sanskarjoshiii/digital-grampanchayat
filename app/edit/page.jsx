@@ -1,30 +1,27 @@
 "use client";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useEdgeStore } from "@/lib/edgestore";
 import { useGlobalContext } from "../context/context";
 
 const Page = () => {
   const { userData, handleUserData, updateUser, setOpenSidebar } =
     useGlobalContext();
+  const { edgestore } = useEdgeStore();
+
+  // Was posting straight to Cloudinary with the cloud name and unsigned preset
+  // hardcoded in this file, which is a second storage account nobody watches
+  // and an open upload endpoint. Profile photos now go to the same bucket the
+  // rest of the app uses.
   const handlePic = async (e) => {
     const filedata = e.target.files?.[0];
     if (!filedata) return;
 
-    const formData = new FormData();
-    formData.append("file", filedata);
-    formData.append("upload_preset", "gsceswka");
-    formData.append("cloud_name", "dge7wv4zo");
-
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dge7wv4zo/image/upload",
-        {
-          method: "post",
-          body: formData,
-        }
-      );
-      const result = await res.json();
+      const result = await edgestore.profileImages.upload({ file: filedata });
       handleUserData("profile", result.url);
     } catch (error) {
+      toast.error("Could not upload profile photo");
       console.log(error);
     }
   };
