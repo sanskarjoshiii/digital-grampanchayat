@@ -1,11 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useGlobalContext } from "../context/context";
 
 // A thin top progress bar that gives instant feedback on tab/link clicks and
 // completes when the new route has rendered — so navigation never feels dead.
+//
+// It also covers the global `loader` flag that pages set while fetching. That
+// used to render a full-screen white overlay, which blanked the page on every
+// section change; the page now stays on screen with this bar running over it.
 export default function RouteProgress() {
   const pathname = usePathname();
+  const { loader } = useGlobalContext();
   const [state, setState] = useState("idle"); // idle | loading | done
   const firstRender = useRef(true);
   const timers = useRef([]);
@@ -42,6 +48,23 @@ export default function RouteProgress() {
       clearTimers();
     };
   }, []);
+
+  // Mirror the global data-loading flag, so a page fetching its content shows
+  // the bar rather than a blank screen.
+  useEffect(() => {
+    if (loader) {
+      clearTimers();
+      setState("loading");
+      timers.current.push(setTimeout(() => setState("idle"), 12000));
+    } else {
+      setState((current) => {
+        if (current !== "loading") return current;
+        clearTimers();
+        timers.current.push(setTimeout(() => setState("idle"), 350));
+        return "done";
+      });
+    }
+  }, [loader]);
 
   // When the path actually changes, finish the bar.
   useEffect(() => {

@@ -26,6 +26,9 @@ export async function GET() {
         phoneNo: user.phoneNo || "",
         profile: user.profile || "",
         userType: user.userType || "user",
+        village: user.village || "",
+        district: user.district || "",
+        state: user.state || "",
       },
     });
   } catch (error) {

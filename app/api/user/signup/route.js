@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { email, password, name, username, profile = "", otp } = await req.json();
+    const { email, password, name, username, profile = "", otp, village = "", district = "", state = "" } = await req.json();
     // const user
   await  connectToDB();
     const record = await Otp.findOne({ email, otp });
@@ -35,7 +35,7 @@ export async function POST(req) {
     if (await User.exists({ username: normalizedUsername })) {
       return NextResponse.json({ message: "This username is already taken" }, { status: 409 });
     }
-    const user = await User.create({ email, password, userType: "user", name, username: normalizedUsername, profile });
+    const user = await User.create({ email, password, userType: "user", name, username: normalizedUsername, profile, village, district, state });
     await Otp.findOneAndDelete({ email });
     const response = NextResponse.json(
       { message: "Account Created Successfully" },

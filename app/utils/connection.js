@@ -12,8 +12,8 @@ export const connectToDB = async () => {
     // Validate outside the try so a missing var fails loudly instead of being swallowed.
     const dbUrl = requireEnv("DB_URL", "your MongoDB Atlas connection string");
     // Keep dev and production data apart: set DB_NAME on the production host.
-    // Defaults to the original name so existing setups keep working untouched.
-    const dbName = process.env.DB_NAME?.trim() || "meripanchayat";
+    // Defaults to panchayatX, the database this project uses.
+    const dbName = process.env.DB_NAME?.trim() || "panchayatX";
     try {
         // Pass the URL untouched and let dbName select the database, rather than
         // concatenating it — appending breaks any URL with a path or ?query.

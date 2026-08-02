@@ -18,6 +18,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body {
+  /* The page itself is the only thing that scrolls vertically. A stray wide
+     element must never add a horizontal bar. `clip` rather than `hidden`
+     because `hidden` would turn body into a scroll container and break the
+     sticky header. */
+  overflow-x: clip;
+}
+
 .container {
   max-width: 100%;
   padding: 0;

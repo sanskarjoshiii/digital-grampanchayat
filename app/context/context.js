@@ -1,18 +1,30 @@
 //create a context
 "use client";
-import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { LANGUAGE_STORAGE_KEY, LANGUAGE_VALUES } from "../utils/language";
 
 export const AppContext = createContext();
 
 //provider needed
 export const AppProvider = ({ children }) => {
-  const router = useRouter();
   //defining login
 
   //logic for loader
+  // Remembered across visits: a Marathi reader should not have to switch the
+  // site back to Marathi every time they open a page.
   const [language, setLanguage] = useState("english");
+
+  useEffect(() => {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (LANGUAGE_VALUES.includes(saved)) setLanguage(saved);
+  }, []);
+
+  const chooseLanguage = (value) => {
+    if (!LANGUAGE_VALUES.includes(value)) return;
+    setLanguage(value);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, value);
+  };
 
   const [loader, setLoader] = useState(false);
 
@@ -24,26 +36,13 @@ export const AppProvider = ({ children }) => {
   };
 
   //user data modification login
-  const [userData, setUserData] = useState({
-    email: "",
-    phoneNo: "",
-    name: "",
-    profile: "",
-  });
-
-  const handleUserData = (e, profile) => {
-    if (e == "profile") {
-      setUserData({ ...userData, profile: profile });
-    } else {
-      setUserData({ ...userData, [e.target.name]: e.target.value });
-    }
-  };
   const emptyUser = { email: "", phoneNo: "", name: "", profile: "" };
+  const [userData, setUserData] = useState(emptyUser);
 
   // Ask the server who this browser is, using the signed session cookie rather
   // than the email in localStorage. localStorage outlives the cookie, so
   // trusting it left the UI looking signed in while uploads were rejected as
-  // anonymous — with a misleading "check your connection" error.
+  // anonymous, with a misleading "check your connection" error.
   const getUserData = async () => {
     let response;
     try {
@@ -69,38 +68,14 @@ export const AppProvider = ({ children }) => {
     }
     setUserData(emptyUser);
   };
+
   useEffect(() => {
     getUserData();
   }, []);
 
-  const updateUser = async () => {
-    const response = await fetch("/api/user", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: userData.email,
-        phoneNo: userData.phoneNo,
-        profile: userData.profile,
-        name: userData.name,
-      }),
-    });
-    if (response.status == 200) {
-      const res = await response.json();
-      toast.success("Update Successfullly");
-      router.push("/");
-      getUserData();
-    } else {
-      toast.error("Check your internet connection");
-    }
-  };
-
   return (
     <AppContext.Provider
       value={{
-        handleUserData,
-        updateUser,
         userData,
         toggleSidebar,
         getUserData,
@@ -109,7 +84,7 @@ export const AppProvider = ({ children }) => {
         setUserData,
         setLoader,
         loader,
-        setLanguage,
+        setLanguage: chooseLanguage,
         language,
       }}
     >

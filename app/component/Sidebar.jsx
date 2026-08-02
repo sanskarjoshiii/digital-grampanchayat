@@ -24,10 +24,10 @@ const Sidebar = () => {
           opacity: openSidebar ? 1 : 0,
           pointerEvents: openSidebar ? "auto" : "none",
         }}
-        className="fixed inset-0 bg-ink/30 lg:hidden"
+        className="fixed inset-0 bg-ink/30 xl:hidden"
       />
       <aside
-        className="w-[300px] max-w-[85vw] h-[100vh] bg-paper border-r border-line flex flex-col lg:hidden"
+        className="w-[300px] max-w-[85vw] h-[100vh] bg-paper border-r border-line flex flex-col xl:hidden"
         style={{
           zIndex: 1000,
           transition: "left .35s cubic-bezier(0.4,0,0.2,1)",

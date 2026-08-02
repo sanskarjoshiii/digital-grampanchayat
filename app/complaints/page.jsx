@@ -57,7 +57,7 @@ export default function ComplaintsPage() {
   // villager's view of their own submissions.
   if (isAdmin)
     return (
-      <main className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-16">
+      <main className="min-h-[calc(100vh-4rem)] bg-cream px-4 sm:px-6 lg:px-8 py-16">
         <div className="mx-auto max-w-md rounded-card border border-line bg-paper px-6 py-12 text-center">
           <h1 className="text-xl font-semibold text-ink">This page is for villagers</h1>
           <p className="mt-2 text-sm text-muted">
@@ -72,7 +72,7 @@ export default function ComplaintsPage() {
 
   if (!userData?.email)
     return (
-      <main className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-16">
+      <main className="min-h-[calc(100vh-4rem)] bg-cream px-4 sm:px-6 lg:px-8 py-16">
         <div className="mx-auto max-w-md rounded-card border border-line bg-paper px-6 py-12 text-center">
           <h1 className="text-xl font-semibold text-ink">Log in to track your complaints</h1>
           <p className="mt-2 text-sm text-muted">
@@ -94,19 +94,13 @@ export default function ComplaintsPage() {
 
   return (
     <main
-      className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-6 sm:px-8 sm:py-8"
+      className="min-h-[calc(100vh-4rem)] bg-cream px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
       onClick={() => setOpenSidebar(false)}
     >
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-muted">Your submissions</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">My complaints</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              Track what you have reported to the Panchayat. Quote the complaint number when you
-              visit the office.
-            </p>
-          </div>
+        {/* No page title or blurb: the section name is in the top nav and the
+            explanation is in the help panel. */}
+        <div className="mb-6 flex justify-end">
           <button onClick={() => setCreating(true)} className="btn-primary shrink-0 text-sm">
             + New complaint
           </button>

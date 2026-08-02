@@ -2,7 +2,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useGlobalContext } from "../../context/context";
 import NoDataFound from "../../component/NoDataFound";
-import { money, statusLabel, yearOf } from "../../utils/format";
+import Dropdown from "../../component/Dropdown";
+import { money } from "../../utils/format";
+import { FUND_SOURCES, sourceMeta, totalsOf } from "../../utils/funds";
 import {
   ResponsiveContainer,
   BarChart,
@@ -19,21 +21,16 @@ import {
 
 // Minimal, professional palette — a single desaturated slate ramp
 // (validated as an ordinal ramp: monotone lightness, single hue, clears surface).
-// Sanctioned→Received→Utilized are stages of one measure, so one hue, dark→light.
+// Expected→Received→Spent are stages of one measure, so one hue, dark→light.
 const C = {
-  sanctioned: "#33475a", // dark slate
+  expected: "#33475a", // dark slate
   received: "#647e99", // mid slate
-  utilized: "#93a9c0", // light slate
+  spent: "#93a9c0", // light slate
   ink: "#1f1f1f",
   grid: "#e6e6e1",
   axis: "#8a8a82",
 };
-// Status reads as progression: light (pending) → dark (completed).
-const STATUS_COLORS = {
-  pending: "#93a9c0",
-  ongoing: "#647e99",
-  completed: "#33475a",
-};
+const SOURCE_COLORS = { goi: "#33475a", state: "#647e99", other: "#93a9c0" };
 
 // Compact ₹ for axis ticks: ₹5L, ₹50K
 const compact = (n) => {
@@ -57,7 +54,7 @@ const ChartTooltip = ({ active, payload, label, isMoney = true }) => {
           />
           <span className="text-muted">{p.name}:</span>
           <span className="font-medium text-ink">
-            {isMoney ? money(p.value) : `${p.value}%`}
+            {isMoney ? money(p.value) : p.value}
           </span>
         </div>
       ))}
@@ -78,10 +75,7 @@ const Stat = ({ label, value, dot }) => (
   <div className="ds-card p-5">
     <p className="text-xs uppercase tracking-wide text-muted flex items-center gap-1.5">
       {dot && (
-        <span
-          className="inline-block w-2 h-2 rounded-full"
-          style={{ background: dot }}
-        />
+        <span className="inline-block w-2 h-2 rounded-full" style={{ background: dot }} />
       )}
       {label}
     </p>
@@ -92,83 +86,83 @@ const Stat = ({ label, value, dot }) => (
 const Page = () => {
   const { setOpenSidebar, setLoader, language } = useGlobalContext();
   const en = language == "english";
-  const [works, setWorks] = useState([]);
+  const [funds, setFunds] = useState([]);
   const [year, setYear] = useState("all");
   const [scheme, setScheme] = useState("all");
 
   useEffect(() => {
     const run = async () => {
       setLoader(true);
-      const res = await fetch("/api/works");
-      if (res.status === 200) setWorks(await res.json());
+      const res = await fetch("/api/funds");
+      if (res.status === 200) {
+        const data = await res.json();
+        setFunds(data.funds || []);
+      }
       setLoader(false);
     };
     run();
   }, []);
 
-  // Filter options derived from all works
-  const years = useMemo(() => {
-    const s = new Set();
-    works.forEach((w) => {
-      const y = yearOf(w.startDate || w.createdAt);
-      if (y) s.add(String(y));
-    });
-    return Array.from(s).sort();
-  }, [works]);
-
-  const schemes = useMemo(() => {
-    const s = new Set();
-    works.forEach((w) => w.schemeName && s.add(w.schemeName));
-    return Array.from(s).sort();
-  }, [works]);
+  const years = useMemo(
+    () => [...new Set(funds.map((f) => f.financialYear))].sort().reverse(),
+    [funds]
+  );
+  const schemes = useMemo(
+    () => [...new Set(funds.map((f) => f.scheme).filter(Boolean))].sort(),
+    [funds]
+  );
 
   const filtered = useMemo(
     () =>
-      works.filter((w) => {
-        const y = String(yearOf(w.startDate || w.createdAt));
-        return (
-          (year === "all" || y === year) &&
-          (scheme === "all" || w.schemeName === scheme)
-        );
-      }),
-    [works, year, scheme]
+      funds.filter(
+        (f) =>
+          (year === "all" || f.financialYear === year) &&
+          (scheme === "all" || f.scheme === scheme)
+      ),
+    [funds, year, scheme]
   );
 
   const d = useMemo(() => {
-    const totals = { sanctioned: 0, received: 0, utilized: 0, remaining: 0 };
-    const statusCount = { pending: 0, ongoing: 0, completed: 0 };
-    const scheme = {};
-    const year = {};
-    filtered.forEach((w) => {
-      totals.sanctioned += Number(w.sanctionedAmount || 0);
-      totals.received += Number(w.receivedAmount || 0);
-      totals.utilized += Number(w.amountUtilized || 0);
-      totals.remaining += Number(w.remainingBalance || 0);
-      statusCount[w.status] = (statusCount[w.status] || 0) + 1;
+    const totals = totalsOf(filtered);
 
-      const s = w.schemeName || "—";
-      scheme[s] = scheme[s] || { name: s, sanctioned: 0, received: 0, utilized: 0 };
-      scheme[s].sanctioned += Number(w.sanctionedAmount || 0);
-      scheme[s].received += Number(w.receivedAmount || 0);
-      scheme[s].utilized += Number(w.amountUtilized || 0);
+    const byYear = {};
+    const byScheme = {};
+    const bySource = {};
+    filtered.forEach((f) => {
+      const y = (byYear[f.financialYear] = byYear[f.financialYear] || {
+        name: f.financialYear,
+        expected: 0,
+        received: 0,
+        spent: 0,
+      });
+      y.expected += Number(f.expectedFund || 0);
+      y.received += Number(f.actualFundReceived || 0);
+      y.spent += Number(f.actualExpenditure || 0);
 
-      const y = yearOf(w.startDate || w.createdAt) || "—";
-      year[y] = year[y] || { name: String(y), sanctioned: 0, received: 0 };
-      year[y].sanctioned += Number(w.sanctionedAmount || 0);
-      year[y].received += Number(w.receivedAmount || 0);
+      // Long scheme names would swamp the axis, so trim to the leading words.
+      const shortName = f.scheme.replace(/\s*\[\d+\]\s*$/, "").slice(0, 28);
+      const s = (byScheme[shortName] = byScheme[shortName] || {
+        name: shortName,
+        received: 0,
+        spent: 0,
+      });
+      s.received += Number(f.actualFundReceived || 0);
+      s.spent += Number(f.actualExpenditure || 0);
+
+      bySource[f.source] = (bySource[f.source] || 0) + Number(f.actualFundReceived || 0);
     });
 
     return {
       totals,
-      statusData: ["pending", "ongoing", "completed"]
-        .map((k) => ({ name: statusLabel(k, en), key: k, value: statusCount[k] || 0 }))
+      byYear: Object.values(byYear).sort((a, b) => a.name.localeCompare(b.name)),
+      byScheme: Object.values(byScheme),
+      bySource: Object.entries(bySource)
+        .map(([key, value]) => ({
+          name: en ? sourceMeta(key).label : sourceMeta(key).hi,
+          key,
+          value,
+        }))
         .filter((x) => x.value > 0),
-      byScheme: Object.values(scheme),
-      byYear: Object.values(year).sort((a, b) => a.name.localeCompare(b.name)),
-      progress: filtered.map((w) => ({
-        name: w.workId,
-        progress: Number(w.progress || 0),
-      })),
       count: filtered.length,
     };
   }, [filtered, en]);
@@ -182,58 +176,42 @@ const Page = () => {
   return (
     <div
       onClick={() => setOpenSidebar(false)}
-      className="w-full min-h-[91vh] bg-paper"
+      className="w-full min-h-[calc(100vh-4rem)] bg-paper"
     >
-      <div className="border-b border-line px-6 py-6 text-center">
-        <h1 className="text-2xl font-semibold text-ink">
-          {en ? "Funds at a Glance" : "एक नज़र में निधि"}
-        </h1>
-        <p className="text-sm text-muted mt-1">
-          {en
-            ? "How public funds are sanctioned, received and spent across all works."
-            : "सभी कामों में सार्वजनिक निधि कैसे मंज़ूर, प्राप्त और खर्च की जाती है।"}
-        </p>
-      </div>
-
-      {works.length === 0 ? (
+      {funds.length === 0 ? (
         <NoDataFound />
       ) : (
-        <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-5">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-5">
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <label className="text-xs uppercase tracking-wide text-muted">
                 {en ? "Year" : "वर्ष"}
               </label>
-              <select
+              <Dropdown
                 value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-line bg-paper text-sm text-ink outline-none focus:border-ink transition-colors"
-              >
-                <option value="all">{en ? "All years" : "सभी वर्ष"}</option>
-                {years.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
+                options={[
+                  { value: "all", label: en ? "All years" : "सभी वर्ष" },
+                  ...years.map((y) => ({ value: y, label: y })),
+                ]}
+                onChange={setYear}
+                ariaLabel={en ? "Year" : "वर्ष"}
+              />
             </div>
             <div className="flex items-center gap-2">
               <label className="text-xs uppercase tracking-wide text-muted">
                 {en ? "Scheme" : "योजना"}
               </label>
-              <select
+              <Dropdown
                 value={scheme}
-                onChange={(e) => setScheme(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-line bg-paper text-sm text-ink outline-none focus:border-ink transition-colors max-w-[220px]"
-              >
-                <option value="all">{en ? "All schemes" : "सभी योजनाएँ"}</option>
-                {schemes.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+                options={[
+                  { value: "all", label: en ? "All schemes" : "सभी योजनाएँ" },
+                  ...schemes.map((s) => ({ value: s, label: s })),
+                ]}
+                onChange={setScheme}
+                className="max-w-[240px]"
+                ariaLabel={en ? "Scheme" : "योजना"}
+              />
             </div>
             {(year !== "all" || scheme !== "all") && (
               <button
@@ -241,195 +219,107 @@ const Page = () => {
                   setYear("all");
                   setScheme("all");
                 }}
-                className="text-sm text-muted hover:text-ink underline underline-offset-2"
+                className="text-sm font-medium text-ink hover:underline"
               >
                 {en ? "Reset" : "रीसेट"}
               </button>
             )}
-            <span className="ml-auto text-sm text-muted">
-              {d.count} {en ? "works" : "कामे"}
-            </span>
           </div>
 
-          {d.count === 0 ? (
-            <div className="py-16 text-center text-muted text-sm">
-              {en
-                ? "No works match this filter."
-                : "इस फ़िल्टर से कोई काम मेल नहीं खाता।"}
-            </div>
-          ) : (
-            <>
-          {/* KPI row */}
+          {/* Headline figures */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Stat
-              label={en ? "Total Sanctioned" : "कुल मंज़ूर"}
-              value={money(d.totals.sanctioned)}
-              dot={C.sanctioned}
+              label={en ? "Expected" : "अपेक्षित"}
+              value={money(d.totals.expectedFund)}
+              dot={C.expected}
             />
             <Stat
-              label={en ? "Total Received" : "कुल प्राप्त"}
-              value={money(d.totals.received)}
+              label={en ? "Received" : "प्राप्त"}
+              value={money(d.totals.actualFundReceived)}
               dot={C.received}
             />
             <Stat
-              label={en ? "Total Utilized" : "कुल उपयोग"}
-              value={money(d.totals.utilized)}
-              dot={C.utilized}
+              label={en ? "Spent" : "व्यय"}
+              value={money(d.totals.actualExpenditure)}
+              dot={C.spent}
             />
-            <Stat
-              label={en ? "Remaining Balance" : "शेष राशि"}
-              value={money(d.totals.remaining)}
-            />
+            <Stat label={en ? "Records" : "नोंदी"} value={d.count} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* Status donut */}
-            <Card
-              title={en ? "Works by Status" : "स्थिति अनुसार कामे"}
-              subtitle={`${d.count} ${en ? "works in total" : "कुल कामे"}`}
-            >
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={d.statusData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={90}
-                      paddingAngle={2}
-                      stroke="#ffffff"
-                      strokeWidth={2}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      labelLine={false}
-                    >
-                      {d.statusData.map((e) => (
-                        <Cell key={e.key} fill={STATUS_COLORS[e.key]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      content={<ChartTooltip isMoney={false} />}
-                      formatter={(v) => v}
-                    />
-                    <Legend
-                      iconType="circle"
-                      wrapperStyle={{ fontSize: 12, color: C.axis }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            {/* Progress by work */}
-            <Card
-              title={en ? "Progress by Work" : "काम अनुसार प्रगति"}
-              subtitle={en ? "Completion %" : "पूर्णता %"}
-            >
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={d.progress}
-                    layout="vertical"
-                    margin={{ left: 8, right: 24 }}
-                  >
-                    <CartesianGrid
-                      horizontal={false}
-                      stroke={C.grid}
-                      strokeDasharray="3 3"
-                    />
-                    <XAxis
-                      type="number"
-                      domain={[0, 100]}
-                      unit="%"
-                      {...axisProps}
-                    />
-                    <YAxis
-                      type="category"
-                      dataKey="name"
-                      width={90}
-                      {...axisProps}
-                    />
-                    <Tooltip
-                      content={<ChartTooltip isMoney={false} />}
-                      cursor={{ fill: "rgba(31,31,31,0.04)" }}
-                    />
-                    <Bar
-                      dataKey="progress"
-                      name={en ? "Progress" : "प्रगति"}
-                      fill={C.ink}
-                      radius={[0, 4, 4, 0]}
-                      barSize={16}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-          </div>
-
-          {/* Funds by scheme */}
           <Card
-            title={en ? "Funds by Scheme" : "योजना अनुसार निधि"}
+            title={en ? "Year by year" : "वर्षानुसार"}
             subtitle={
               en
-                ? "Sanctioned vs Received vs Utilized"
-                : "मंज़ूर बनाम प्राप्त बनाम उपयोग"
+                ? "Expected, received and spent for each financial year."
+                : "प्रत्येक वित्तीय वर्ष में अपेक्षित, प्राप्त और खर्च।"
             }
           >
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={d.byScheme} barCategoryGap="22%">
-                  <CartesianGrid
-                    vertical={false}
-                    stroke={C.grid}
-                    strokeDasharray="3 3"
-                  />
-                  <XAxis dataKey="name" {...axisProps} />
-                  <YAxis tickFormatter={compact} {...axisProps} width={54} />
-                  <Tooltip
-                    content={<ChartTooltip />}
-                    cursor={{ fill: "rgba(31,31,31,0.04)" }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 12, color: C.axis }} />
-                  <Bar dataKey="sanctioned" name={en ? "Sanctioned" : "मंज़ूर"} fill={C.sanctioned} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="received" name={en ? "Received" : "प्राप्त"} fill={C.received} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="utilized" name={en ? "Utilized" : "उपयोग"} fill={C.utilized} radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={d.byYear} margin={{ top: 4, right: 8, left: 8, bottom: 4 }}>
+                <CartesianGrid stroke={C.grid} vertical={false} />
+                <XAxis dataKey="name" {...axisProps} />
+                <YAxis tickFormatter={compact} {...axisProps} width={62} />
+                <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="expected" name={en ? "Expected" : "अपेक्षित"} fill={C.expected} radius={[3, 3, 0, 0]} />
+                <Bar dataKey="received" name={en ? "Received" : "प्राप्त"} fill={C.received} radius={[3, 3, 0, 0]} />
+                <Bar dataKey="spent" name={en ? "Spent" : "व्यय"} fill={C.spent} radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
 
-          {/* Funds by year */}
-          <Card
-            title={en ? "Funds by Year" : "वर्ष अनुसार निधि"}
-            subtitle={
-              en ? "Sanctioned vs Received per year" : "प्रति वर्ष मंज़ूर बनाम प्राप्त"
-            }
-          >
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={d.byYear} barCategoryGap="30%">
-                  <CartesianGrid
-                    vertical={false}
-                    stroke={C.grid}
-                    strokeDasharray="3 3"
-                  />
-                  <XAxis dataKey="name" {...axisProps} />
-                  <YAxis tickFormatter={compact} {...axisProps} width={54} />
-                  <Tooltip
-                    content={<ChartTooltip />}
-                    cursor={{ fill: "rgba(31,31,31,0.04)" }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 12, color: C.axis }} />
-                  <Bar dataKey="sanctioned" name={en ? "Sanctioned" : "मंज़ूर"} fill={C.sanctioned} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="received" name={en ? "Received" : "प्राप्त"} fill={C.received} radius={[4, 4, 0, 0]} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <Card
+              title={en ? "By scheme" : "योजनानुसार"}
+              subtitle={en ? "Received against spent." : "प्राप्त बनाम व्यय।"}
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={d.byScheme}
+                  layout="vertical"
+                  margin={{ top: 4, right: 12, left: 8, bottom: 4 }}
+                >
+                  <CartesianGrid stroke={C.grid} horizontal={false} />
+                  <XAxis type="number" tickFormatter={compact} {...axisProps} />
+                  <YAxis type="category" dataKey="name" width={150} {...axisProps} />
+                  <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Bar dataKey="received" name={en ? "Received" : "प्राप्त"} fill={C.received} radius={[0, 3, 3, 0]} />
+                  <Bar dataKey="spent" name={en ? "Spent" : "व्यय"} fill={C.spent} radius={[0, 3, 3, 0]} />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
-          </Card>
-            </>
-          )}
+            </Card>
+
+            <Card
+              title={en ? "Where the money came from" : "पैसा कहाँ से आया"}
+              subtitle={en ? "Funds received by source." : "स्रोत अनुसार प्राप्त निधि।"}
+            >
+              {d.bySource.length === 0 ? (
+                <p className="text-sm text-muted py-16 text-center">
+                  {en ? "Nothing received in this selection." : "इस चयन में कुछ प्राप्त नहीं हुआ।"}
+                </p>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={d.bySource}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={62}
+                      outerRadius={100}
+                      paddingAngle={2}
+                    >
+                      {d.bySource.map((entry) => (
+                        <Cell key={entry.key} fill={SOURCE_COLORS[entry.key] || C.received} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<ChartTooltip />} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
+          </div>
         </div>
       )}
     </div>

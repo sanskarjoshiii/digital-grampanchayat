@@ -1,10 +1,10 @@
 "use client"
 import React, { useState } from "react";
-import Banner from "../component/Banner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useGlobalContext } from "../context/context";
+import { pick } from "../utils/language";
 import LoginBanner from "../component/LoginBanner";
 import { useEdgeStore } from "@/lib/edgestore";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Using react-icons for eye icons
@@ -15,7 +15,8 @@ const Page = () => {
   const [userData, setUserData] = useState({ email: "", password: ""});
   const [showPassword, setShowPassword] = useState(false);
 
-  const {getUserData,setLoader}=useGlobalContext();
+  const {getUserData,setLoader,language}=useGlobalContext();
+  const t = (strings) => pick(language, strings);
   // EdgeStore resolves the upload context once when the provider mounts. After
   // logging in we ask it to resolve again, otherwise a context cached while
   // signed out keeps rejecting this account's uploads.
@@ -31,14 +32,14 @@ const Page = () => {
     body: JSON.stringify({ email:userData.email ,password:userData.password})
     })
     if(response.status==200){
-      toast.success("Login Successfully");
+      toast.success(t({ en: "Logged in", mr: "लॉग इन झाले", hi: "लॉग इन हो गया" }));
       localStorage.setItem("email",userData.email)
       await resetEdgeStore().catch(() => {});
       getUserData();
       router.push("/")
     }
     else{
-      toast.error("Invalid Credentials")
+      toast.error(t({ en: "Wrong email or password", mr: "ईमेल किंवा पासवर्ड चुकीचा आहे", hi: "ईमेल या पासवर्ड ग़लत है" }))
 
     }
     setLoader(false)
@@ -56,11 +57,15 @@ const Page = () => {
           <LoginBanner />
         </div>
         <h1 className="w-full text-center font-semibold text-xl mb-6 text-ink">
-          Login to your account
+          {t({
+            en: "Login to your account",
+            mr: "तुमच्या खात्यात लॉग इन करा",
+            hi: "अपने खाते में लॉग इन करें",
+          })}
         </h1>
         <div className="mb-4">
           <label htmlFor="email" className="ds-label">
-            Your email
+            {t({ en: "Your email", mr: "तुमचा ईमेल", hi: "आपका ईमेल" })}
           </label>
           <input
             type="email"
@@ -74,7 +79,7 @@ const Page = () => {
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="ds-label">
-            Your password
+            {t({ en: "Your password", mr: "तुमचा पासवर्ड", hi: "आपका पासवर्ड" })}
           </label>
           <div className="relative w-full">
             <input
@@ -84,7 +89,7 @@ const Page = () => {
               onChange={(e) =>
                 setUserData({ ...userData, password: e.target.value })
               }
-              placeholder="Enter password"
+              placeholder={t({ en: "Enter password", mr: "पासवर्ड टाका", hi: "पासवर्ड डालें" })}
               className="ds-input pr-10"
               required
             />
@@ -102,17 +107,17 @@ const Page = () => {
             href={"/signup"}
             className="text-ink font-medium hover:underline underline-offset-2"
           >
-            Create account
+            {t({ en: "Create account", mr: "नवीन खाते काढा", hi: "नया खाता बनाएँ" })}
           </Link>
           <Link
             href={"/login/forget_password"}
             className="text-muted hover:text-ink hover:underline underline-offset-2"
           >
-            Forgot password?
+            {t({ en: "Forgot password?", mr: "पासवर्ड विसरलात?", hi: "पासवर्ड भूल गए?" })}
           </Link>
         </div>
         <button type="submit" className="btn-primary w-full">
-          Login
+          {t({ en: "Login", mr: "लॉग इन करा", hi: "लॉग इन करें" })}
         </button>
       </form>
     </div>

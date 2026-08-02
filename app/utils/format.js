@@ -43,23 +43,6 @@ export const toInputDate = (d) => {
   return date.toISOString().split("T")[0];
 };
 
-export const STATUSES = ["pending", "ongoing", "completed"];
-
-export const statusLabel = (status, en = true) => {
-  const map = {
-    pending: en ? "Pending" : "प्रलंबित",
-    ongoing: en ? "Ongoing" : "प्रगतिपथावर",
-    completed: en ? "Completed" : "पूर्ण",
-  };
-  return map[status] || status;
-};
-
-// Tailwind classes for the status badge
-export const statusClasses = (status) => {
-  const map = {
-    pending: "bg-amber-50 text-amber-700 border-amber-200",
-    ongoing: "bg-blue-50 text-blue-700 border-blue-200",
-    completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  };
-  return map[status] || "bg-mist text-muted border-line";
-};
+// The pending/ongoing/completed helpers that used to live here belonged to the
+// Work module, which the scheme-wise fund records replaced. Complaint statuses
+// have their own vocabulary in utils/complaints.js.

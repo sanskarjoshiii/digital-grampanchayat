@@ -17,7 +17,7 @@ const readEnv = (key) =>
 
 const dbUrl = readEnv("DB_URL");
 // Must match app/utils/connection.js, or the seeded admin lands in the wrong database.
-const dbName = process.env.DB_NAME?.trim() || readEnv("DB_NAME") || "meripanchayat";
+const dbName = process.env.DB_NAME?.trim() || readEnv("DB_NAME") || "panchayatX";
 
 if (!dbUrl) {
   console.error("DB_URL is not configured in .env.local");

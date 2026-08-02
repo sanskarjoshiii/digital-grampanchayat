@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useGlobalContext } from "../context/context";
 import ShareMenu from "../component/ShareMenu";
+import Dropdown from "../component/Dropdown";
+import { avatarSrc } from "../utils/avatar";
 import PollComposer from "../component/PollComposer";
 import PollCard from "../component/PollCard";
 import UserPeek from "../component/UserPeek";
@@ -226,19 +228,13 @@ export default function CommunityPage() {
 
   return (
     <main
-      className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-6 sm:px-8 sm:py-8"
+      className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
       onClick={() => setOpenSidebar(false)}
     >
       <div className="mx-auto max-w-5xl">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-muted">Village updates</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">Community</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              Official news, development updates and meeting moments from your Panchayat. New posts
-              stay on the community feed for seven days.
-            </p>
-          </div>
+        {/* No page title or blurb: the section name is in the top nav and the
+            explanation is in the help panel. */}
+        <div className="mb-6 flex justify-end">
           <div className="flex rounded-lg border border-line bg-paper p-1 text-sm">
             <button
               onClick={() => setView("active")}
@@ -256,22 +252,17 @@ export default function CommunityPage() {
         </div>
 
         <div className="mb-6 flex flex-wrap items-end gap-4 rounded-card border border-line bg-paper p-4">
-          <label className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">
               Posted within
             </span>
-            <select
+            <Dropdown
               value={range}
-              onChange={(event) => setRange(event.target.value)}
-              className="ds-input w-auto py-2"
-            >
-              {RANGES.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              options={RANGES}
+              onChange={setRange}
+              ariaLabel="Posted within"
+            />
+          </div>
 
           {range === "custom" && (
             <label className="flex flex-col gap-1.5">
@@ -287,20 +278,10 @@ export default function CommunityPage() {
             </label>
           )}
 
-          <label className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">Sort by</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className="ds-input w-auto py-2"
-            >
-              {SORTS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <Dropdown value={sort} options={SORTS} onChange={setSort} ariaLabel="Sort by" />
+          </div>
 
           {(range !== "all" || sort !== "newest") && (
             <button
@@ -526,7 +507,7 @@ export default function CommunityPage() {
                             aria-label={`View profile of ${comment.user.name}`}
                           >
                             <img
-                              src={comment.user.profile || "/panchayatx-logo.png"}
+                              src={avatarSrc(comment.user.profile)}
                               alt=""
                               className="h-8 w-8 rounded-full border border-line object-cover"
                             />

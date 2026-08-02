@@ -1,194 +1,56 @@
 "use client";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useGlobalContext } from "../../../context/context";
+import FundForm from "../../../component/FundForm";
 
 const Page = ({ params }) => {
-    const router = useRouter();
-  const [formData, setFormData] = useState({
-    scheme: "",
-    component: "",
-    expected_funds: "",
-    actual_funds: "",
-    reverted_funds: "",
-    actual_expenditure: "",
-    date: "",
-  });
+  const { userData, setOpenSidebar } = useGlobalContext();
+  const [fund, setFund] = useState(null);
+  const [state, setState] = useState("loading");
+
   useEffect(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    const response = await fetch(`/api/admin/panchayat_funds/${params.id}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.status == 200) {
-      const res = await response.json();
-      console.log(res)
-      setFormData(res.message);
-    }
-    else{
-        router.push("/")
-    }
-  };
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
-  };
+    (async () => {
+      const response = await fetch(`/api/funds/${params.id}`);
+      if (!response.ok) return setState("missing");
+      setFund(await response.json());
+      setState("ready");
+    })();
+  }, [params.id]);
 
-  const handleSubmit=async(e)=>{
-    e.preventDefault();
-    const response = await fetch(`/api/admin/panchayat_funds/${params.id}`, {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body:JSON.stringify({...formData})
-      });
-      if (response.status == 200) {
-      toast.success("Funds Updated");
-    }
-    else{
-          toast.error("Something Went wrong");
-
-      }
-  }
+  if (userData?.userType !== "admin")
+    return (
+      <div className="w-full min-h-[calc(100vh-4rem)] bg-cream px-4 py-16">
+        <div className="mx-auto max-w-md rounded-card border border-line bg-paper px-6 py-12 text-center">
+          <h1 className="text-xl font-semibold text-ink">Office access only</h1>
+          <p className="mt-2 text-sm text-muted">
+            Only the Panchayat office can edit fund records.
+          </p>
+          <Link href="/panchayat_funds" className="btn-primary mt-6 text-sm">
+            View fund records
+          </Link>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="w-full min-h-[91vh] bg-cream py-10 px-4">
-      <div className="ds-card w-full max-w-xl py-10 px-6 sm:px-8 mx-auto">
-        <form onSubmit={handleSubmit}>
-          <h1 className="w-full text-center font-semibold text-xl mb-6 text-ink">
-            Edit Funds
-          </h1>
-          <div className="mb-5">
-            <label
-              htmlFor="scheme"
-              className="ds-label"
-            >
-              Scheme Name
-            </label>
-            <input
-              type="text"
-              id="scheme"
-              value={formData?.scheme}
-              onChange={handleChange}
-              className="ds-input"
-              placeholder="Enter Text"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="component"
-              className="ds-label"
-            >
-              Component Name
-            </label>
-            <input
-              type="text"
-              id="component"
-              value={formData?.component}
-              onChange={handleChange}
-              className="ds-input"
-              placeholder="Enter Text"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="expected_funds"
-              className="ds-label"
-            >
-              Expected Funds
-            </label>
-            <input
-              type="number"
-              id="expected_funds"
-              value={formData?.expected_funds}
-              onChange={handleChange}
-              className="ds-input"
-              placeholder="Enter Amount"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="actual_funds"
-              className="ds-label"
-            >
-              Actual Funds Received
-            </label>
-            <input
-              type="number"
-              id="actual_funds"
-              value={formData?.actual_funds}
-              onChange={handleChange}
-              className="ds-input"
-              placeholder="Enter Amount"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="reverted_funds"
-              className="ds-label"
-            >
-              Reverted Funds
-            </label>
-            <input
-              type="number"
-              id="reverted_funds"
-              value={formData?.reverted_funds}
-              onChange={handleChange}
-              className="ds-input"
-              placeholder="Enter Amount"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="actual_expenditure"
-              className="ds-label"
-            >
-              Actual Expenditure
-            </label>
-            <input
-              type="number"
-              id="actual_expenditure"
-              value={formData?.actual_expenditure}
-              onChange={handleChange}
-              className="ds-input"
-              placeholder="Enter Amount"
-              required
-            />
-          </div>
-          <div className="mb-5">
-            <label
-              htmlFor="date"
-              className="ds-label"
-            >
-              Date
-            </label>
-            <input
-              type="date"
-              id="date"
-              value={formData?.date ? new Date(formData?.date).toISOString().split("T")[0]:""}
-              onChange={handleChange}
-              className="ds-input"
-              required
-            />
-          </div>
-          <div className="mb-1">
-            <button className="btn-primary w-full">Update funds</button>
-          </div>
-        </form>
-      </div>
+    <div
+      className="w-full min-h-[calc(100vh-4rem)] bg-cream px-4 sm:px-6 lg:px-8 py-10"
+      onClick={() => setOpenSidebar(false)}
+    >
+      {state === "loading" && (
+        <div className="mx-auto h-96 w-full max-w-2xl animate-pulse rounded-card bg-mist" />
+      )}
+      {state === "missing" && (
+        <div className="mx-auto max-w-md rounded-card border border-line bg-paper px-6 py-12 text-center">
+          <h1 className="text-xl font-semibold text-ink">Fund record not found</h1>
+          <Link href="/panchayat_funds" className="btn-primary mt-6 text-sm">
+            Back to funds
+          </Link>
+        </div>
+      )}
+      {state === "ready" && <FundForm fund={fund} id={params.id} />}
     </div>
   );
 };

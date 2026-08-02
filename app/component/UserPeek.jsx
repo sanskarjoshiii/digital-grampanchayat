@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { avatarSrc } from "../utils/avatar";
 
 /**
  * Details of a villager who commented on a post.
@@ -37,7 +38,7 @@ export default function UserPeek({ user, onClose }) {
       >
         <div className="flex items-start gap-4 px-5 py-5">
           <img
-            src={user.profile || "/panchayatx-logo.png"}
+            src={avatarSrc(user.profile)}
             alt=""
             className="h-16 w-16 shrink-0 rounded-full border border-line object-cover"
           />

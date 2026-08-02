@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { useGlobalContext } from "../context/context";
+import { avatarSrc } from "../utils/avatar";
 
 const Avatar = () => {
   const { userData, language } = useGlobalContext();
@@ -11,7 +12,7 @@ const Avatar = () => {
           className="rounded-full h-12 w-12 object-cover border border-line"
           width={48}
           height={48}
-          src={!userData?.profile ? "/panchayatx-logo.png" : userData.profile}
+          src={avatarSrc(userData?.profile)}
           alt="profile"
         />
         <div className="flex flex-col leading-tight">

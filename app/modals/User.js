@@ -28,7 +28,12 @@ const UserSchema = new Schema({
   },
   phoneNo:{
     type:String
-  }
+  },
+  // Which Gram Panchayat this account belongs to. One village today, but
+  // stored per user so a second Panchayat needs no migration.
+  village: { type: String, trim: true },
+  district: { type: String, trim: true },
+  state: { type: String, trim: true },
 });
 const User = models.User || model("User", UserSchema);
 export default User;

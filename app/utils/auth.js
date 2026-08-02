@@ -15,7 +15,7 @@ export const currentUser = async () => {
   const session = verifySession(cookies().get(SESSION_COOKIE)?.value);
   if (!session?.email) return null;
   return User.findOne({ email: session.email })
-    .select("email name username phoneNo profile userType")
+    .select("email name username phoneNo profile userType village district state")
     .lean();
 };
 

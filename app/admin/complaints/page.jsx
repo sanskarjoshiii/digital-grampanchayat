@@ -5,6 +5,8 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useGlobalContext } from "../../context/context";
 import { Clamped, MediaStrip, MediaViewer, StatusBadge } from "../../component/ComplaintBits";
+import Dropdown from "../../component/Dropdown";
+import { avatarSrc } from "../../utils/avatar";
 import {
   COMPLAINT_STATUSES,
   requiresNote,
@@ -52,7 +54,7 @@ export default function ComplaintsDashboard() {
 
   if (!isAdmin)
     return (
-      <main className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-16">
+      <main className="min-h-[calc(100vh-4rem)] bg-cream px-4 sm:px-6 lg:px-8 py-16">
         <div className="mx-auto max-w-md rounded-card border border-line bg-paper px-6 py-12 text-center">
           <h1 className="text-xl font-semibold text-ink">Office access only</h1>
           <p className="mt-2 text-sm text-muted">
@@ -70,19 +72,12 @@ export default function ComplaintsDashboard() {
 
   return (
     <main
-      className="min-h-[calc(100vh-4rem)] bg-cream px-4 py-6 sm:px-8 sm:py-8"
+      className="min-h-[calc(100vh-4rem)] bg-cream px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
       onClick={() => setOpenSidebar(false)}
     >
       <div className="mx-auto max-w-7xl">
-        <div className="mb-6">
-          <p className="text-sm font-medium text-muted">Panchayat office</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">
-            Complaints dashboard
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            Every complaint raised by villagers, with the contact details needed to follow one up.
-          </p>
-        </div>
+        {/* No page title or blurb: the section name is in the top nav and the
+            explanation is in the help panel. */}
 
         {/* Workload at a glance */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -124,17 +119,18 @@ export default function ComplaintsDashboard() {
               placeholder="Complaint ID, title or email…"
             />
           </label>
-          <label className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5">
             <span className="text-xs font-medium uppercase tracking-wide text-muted">Sort</span>
-            <select
+            <Dropdown
               value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className="ds-input w-auto py-2"
-            >
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-            </select>
-          </label>
+              options={[
+                { value: "newest", label: "Newest first" },
+                { value: "oldest", label: "Oldest first" },
+              ]}
+              onChange={setSort}
+              ariaLabel="Sort"
+            />
+          </div>
           {(status !== "all" || query || sort !== "newest") && (
             <button
               onClick={() => {
@@ -192,7 +188,7 @@ export default function ComplaintsDashboard() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <img
-                              src={complaint.raiser.profile || "/panchayatx-logo.png"}
+                              src={avatarSrc(complaint.raiser.profile)}
                               alt=""
                               className="h-8 w-8 shrink-0 rounded-full border border-line object-cover"
                             />
@@ -282,7 +278,7 @@ export default function ComplaintsDashboard() {
                     )}
                     <div className="mt-3 flex items-center gap-2 border-t border-line pt-3">
                       <img
-                        src={complaint.raiser.profile || "/panchayatx-logo.png"}
+                        src={avatarSrc(complaint.raiser.profile)}
                         alt=""
                         className="h-9 w-9 shrink-0 rounded-full border border-line object-cover"
                       />

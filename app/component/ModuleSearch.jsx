@@ -51,12 +51,15 @@ const ModuleSearch = () => {
 
   return (
     <div ref={boxRef} className="relative w-full">
-      <div className="flex items-center gap-2 h-10 px-3 rounded-full bg-mist border border-line focus-within:border-ink transition-colors">
+      {/* h-9 to match the help button and language menu — at h-10 it stood
+          taller than everything else in the bar. */}
+      <div className="flex items-center gap-2 h-9 px-3 rounded-full bg-mist border border-line focus-within:border-ink transition-colors">
         <img
-          width="16"
-          height="16"
+          width="15"
+          height="15"
           src="https://img.icons8.com/ios/50/8a8a82/search--v1.png"
           alt=""
+          className="shrink-0"
         />
         <input
           value={query}
@@ -67,15 +70,13 @@ const ModuleSearch = () => {
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
-          placeholder={
-            language == "english" ? "Search a module…" : "मॉड्यूल खोजें…"
-          }
-          className="bg-transparent text-sm text-ink placeholder-muted outline-none w-full"
+          placeholder={language == "english" ? "Search…" : "खोजें…"}
+          className="bg-transparent text-sm text-ink placeholder-muted outline-none w-full min-w-0"
         />
       </div>
 
       {open && results.length > 0 && (
-        <div className="absolute top-12 left-0 w-full min-w-[240px] bg-paper border border-line rounded-card shadow-pop py-1 z-50">
+        <div className="absolute top-11 left-0 w-full min-w-[240px] bg-paper border border-line rounded-card shadow-pop py-1 z-50">
           {results.map((item, i) => (
             <button
               key={item.href}

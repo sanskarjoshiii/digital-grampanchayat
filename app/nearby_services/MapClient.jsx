@@ -116,15 +116,10 @@ export default function MapClient() {
     });
 
   return (
-    <div className="w-full min-h-[91vh] bg-paper py-6 px-4 sm:px-8">
+    <div className="w-full min-h-[calc(100vh-4rem)] bg-paper py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="border-b border-line pb-5 mb-5 text-center">
-          <h1 className="text-2xl font-semibold text-ink">Nearby Services</h1>
-          <p className="text-sm text-muted mt-1">
-            Locate public services around Chandgaon village
-          </p>
-        </div>
+        {/* No page title or blurb: the section name is in the top nav and the
+            explanation is in the help panel. */}
 
         {/* Controls */}
         <div className="flex flex-col gap-3 mb-4">

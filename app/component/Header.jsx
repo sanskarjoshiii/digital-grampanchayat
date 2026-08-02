@@ -1,36 +1,34 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../context/context";
 import { navItemsFor, label } from "./navItems";
 import ModuleSearch from "./ModuleSearch";
+import HelpButton from "./HelpButton";
+import Dropdown from "./Dropdown";
+import UserMenu from "./UserMenu";
+import { LANGUAGES, pick } from "../utils/language";
 
 const Header = () => {
-  const { toggleSidebar, language, setLanguage, userData, setUserData } =
-    useGlobalContext();
+  const { toggleSidebar, language, setLanguage, userData } = useGlobalContext();
   const pathname = usePathname();
-  const router = useRouter();
   const isLoggedIn = Boolean(userData?.email);
-
-  const logout = async () => {
-    localStorage.removeItem("email");
-    // Drops the httpOnly session cookie as well; ignore failures so a network
-    // hiccup can never trap someone in a signed-in state.
-    await fetch("/api/user/logout", { method: "POST" }).catch(() => {});
-    setUserData({ email: "", phoneNo: "", name: "", profile: "" });
-    router.push("/login");
-  };
 
   return (
     <header className="w-full border-b border-line bg-paper sticky top-0 z-40">
-      <div className="w-full px-5 sm:px-8 h-16 flex items-center gap-4 xl:gap-6">
-        {/* Mobile: hamburger */}
+      {/* Full width with equal padding both sides, so the gutters match and
+          nothing gets clipped on a wide screen. Capping this at a fixed width
+          squeezed eight nav modules plus the account controls into 1280px and
+          pushed the last item off the edge. */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
+        {/* Below xl the eight nav modules cannot fit, so navigation moves into
+            the drawer. Sidebar.jsx uses the same breakpoint. */}
         <button
           onClick={toggleSidebar}
           aria-label="Open menu"
-          className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center hover:bg-mist transition-colors shrink-0"
+          className="xl:hidden w-9 h-9 rounded-lg flex items-center justify-center hover:bg-mist transition-colors shrink-0"
         >
           <img
             width="20"
@@ -41,27 +39,28 @@ const Header = () => {
         </button>
 
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 mr-1 xl:mr-2">
-          <img src="/panchayatx-logo.png" width={34} height={34} alt="logo" />
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 mr-1 sm:mr-3">
+          <img src="/panchayatx-logo.png" width={32} height={32} alt="logo" />
           <span className="font-semibold text-lg text-ink hidden sm:inline tracking-tight">
             PanchayatX
           </span>
         </Link>
 
-        {/* Desktop: module search */}
-        <div className="hidden xl:block w-64 shrink-0">
+        {/* Kept narrow so the eight nav modules and the right-hand controls all
+            fit on one row. It only appears once there is room to spare. */}
+        <div className="hidden 2xl:block w-40 shrink-0">
           <ModuleSearch />
         </div>
 
         {/* Desktop: horizontal nav tabs with sliding active pill */}
-        <nav className="hidden lg:flex items-center gap-1 mx-auto">
+        <nav className="hidden xl:flex items-center gap-1.5 mx-auto">
           {navItemsFor(userData).map((item) => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative px-4 py-2 rounded-lg text-[15px] font-medium whitespace-nowrap"
+                className="relative px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
               >
                 {active && (
                   <motion.span
@@ -83,45 +82,27 @@ const Header = () => {
         </nav>
 
         {/* Right cluster */}
-        <div className="flex items-center gap-2 ml-auto lg:ml-0 shrink-0">
-          <select
-            className="h-9 px-2 rounded-lg border border-line bg-paper text-sm text-ink outline-none focus:border-ink transition-colors"
+        <div className="flex items-center gap-2 ml-auto xl:ml-0 shrink-0">
+          {/* Explains whichever page the villager is currently on. */}
+          <HelpButton />
+          <Dropdown
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option value={"english"}>EN</option>
-            <option value={"marathi"}>हिं</option>
-          </select>
+            options={LANGUAGES.map((l) => ({ value: l.value, label: l.short }))}
+            onChange={setLanguage}
+            ariaLabel="Language"
+          />
 
           {isLoggedIn ? (
-            <>
-              <Link
-                href="/edit"
-                className="hidden sm:flex items-center gap-2 h-9 pl-1 pr-3 rounded-full border border-line hover:bg-mist transition-colors"
-              >
-                <img
-                  className="w-7 h-7 rounded-full object-cover border border-line"
-                  src={!userData.profile ? "/panchayatx-logo.png" : userData.profile}
-                  alt="profile"
-                />
-                <span className="text-sm text-ink max-w-[100px] truncate">
-                  {userData.name || "Profile"}
-                </span>
-              </Link>
-              <button
-                onClick={logout}
-                className="btn-ghost h-9 px-3 py-0 text-sm hidden sm:inline-flex"
-              >
-                {language == "english" ? "Logout" : "लॉग आउट"}
-              </button>
-            </>
+            <UserMenu />
           ) : (
             <>
-              <Link href="/login" className="btn-ghost h-9 px-4 py-0 text-sm">
-                {language == "english" ? "Log in" : "लॉग इन"}
+              {/* On a phone these two would push the row past the screen edge;
+                  the drawer carries the same links there. */}
+              <Link href="/login" className="btn-ghost h-9 px-3 py-0 text-sm hidden sm:inline-flex">
+                {pick(language, { en: "Log in", mr: "लॉग इन", hi: "लॉग इन" })}
               </Link>
-              <Link href="/signup" className="btn-primary h-9 px-4 py-0 text-sm">
-                {language == "english" ? "Sign up" : "साइन अप"}
+              <Link href="/signup" className="btn-primary h-9 px-3 py-0 text-sm hidden sm:inline-flex">
+                {pick(language, { en: "Sign up", mr: "नोंदणी करा", hi: "साइन अप" })}
               </Link>
             </>
           )}
